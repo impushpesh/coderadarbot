@@ -1,11 +1,14 @@
 import { Telegraf } from "telegraf";
 import chalk from "chalk";
+import { format } from "date-fns";
 
 import {
   getCodeforceUserInfo,
   getCodeChefUserInfo,
-  getCodeforceContestList,
+  getUpcomingCodeforcesContests,
   getCodeforceRatingHistory,
+  getLeetCodeRatingInfo,
+  getLeetCodePublicProfile
 } from "./services/index.js";
 
 import dotenv from "dotenv";
@@ -87,6 +90,7 @@ bot.help((ctx) => {
       "/contest - Get Upcoming  contest list\n" + // From Codechef + Codeforces + Leetcode
       "/status- Get your status(Rating) in all platforms\n" + // Codeforces + Codechef + Leetcode
       "/delete - Delete your profile\n" + // Delete user info from DB
+      "/info - Get your profile info saved on db\n" + // Get user info from DB
       "/setup - Set up your profile\n" // Ask for user id of platforms- Codeforces, Codechef, Leetcode
   );
 });
@@ -345,18 +349,301 @@ Rating Change: ${sign}${Math.abs(ratingChange)}`;
   }
 });
 
-// TODO: Use graphql to get data for leetcode
 // /leetcode - Get LeetCode user Info
+bot.command("leetcode", async (ctx) => {
+  try {
+    console.log(
+      chalk.cyan(
+        `[COMMAND] /leetcode triggered by id:  ${ctx.from.id} and username: ${
+          ctx.from.username || "N/A"
+        }`
+      )
+    );
+
+    const user = await User.findOne({ telegramId: ctx.from.id });
+
+    if (!user || !user.leetcodeId) {
+      console.log(
+        chalk.yellow("[WARN] User not found or LeetCode ID not set.")
+      );
+      return ctx.reply(
+        "Please set up your LeetCode username using /setup command."
+      );
+    }
+
+    const userInfo = await getLeetCodePublicProfile(user.leetcodeId);
+
+    if (!userInfo) {
+      console.log(chalk.red("[ERROR] Failed to fetch LeetCode user info."));
+      return ctx.reply(
+        "Failed to fetch LeetCode user info. Please check your username from the /info command."
+      );
+    }
+
+    const {
+      badge,
+      avatar,
+      ranking,
+      country,
+      linkedin,
+      github,
+      twitter,
+    } = userInfo;
+
+    const message = `
+LeetCode ID: ${user.leetcodeId}
+Ranking: ${ranking || "N/A"}
+Country: ${country || "N/A"}
+Badge: ${badge || "N/A"}
+
+Social Links:
+${twitter ? ` Twitter: ${twitter}` : ""}
+${github ? ` GitHub: ${github}` : ""}
+${linkedin ? ` LinkedIn: ${linkedin}` : ""}
+    `.trim();
+
+    await ctx.replyWithPhoto({ url: avatar }, { caption: message });
+    console.log(
+      chalk.green(
+        `[SUCCESS] LeetCode user info sent for id:  ${
+          ctx.from.id
+        } and username: ${ctx.from.username || "N/A"}`
+      )
+    );
+  } catch (error) {
+    console.error(chalk.red("[FATAL] Error in /leetcode command:"), error);
+    ctx.reply("Oops! Something went wrong while fetching your LeetCode info.");
+  }
+});
 
 // /leetcodeRating - Get LeetCode user rating
+bot.command("leetcodeRating", async (ctx) => {
+  try {
+    console.log(
+      chalk.cyan(
+        `[COMMAND] /leetcodeRating triggered by id: ${
+          ctx.from.id
+        } and username: ${ctx.from.username || "N/A"}`
+      )
+    );
+
+    const user = await User.findOne({ telegramId: ctx.from.id });
+    if (!user || !user.leetcodeId) {
+      console.log(chalk.yellow("[WARN] LeetCode ID not found."));
+      return ctx.reply("Please set up your LeetCode username using /setup command.");
+    }
+
+    const userInfo = await getLeetCodeRatingInfo(user.leetcodeId);
+
+    if (!userInfo) {
+      return ctx.reply("Could not fetch your LeetCode contest data.");
+    }
+
+    const { attendedContestsCount, rating } = userInfo;
+
+    const message = `LeetCode Contest Stats:
+Attended Contests: ${attendedContestsCount}
+Current Rating: ${rating}`;
+
+    await ctx.reply(message);
+
+    console.log(
+      chalk.green(
+        `[SUCCESS] LeetCode rating sent for id: ${
+          ctx.from.id
+        } and username: ${ctx.from.username || "N/A"}`
+      )
+    );
+  } catch (error) {
+    console.error(chalk.red("[FATAL] Error in /leetcodeRating command:"), error);
+    ctx.reply("Oops! Something went wrong while fetching your LeetCode info.");
+  }
+});
 
 // /contest - Get Upcoming contest list
+bot.command("contest", async (ctx) => {
+  try {
+    console.log(
+      chalk.cyan(
+        `[COMMAND] /contest triggered by id: ${ctx.from.id} and username: ${
+          ctx.from.username || "N/A"
+        }`
+      )
+    );
+
+    const contests = await getUpcomingCodeforcesContests();
+
+    if (!contests || contests.length === 0) {
+      return ctx.reply("No upcoming contests found.");
+    }
+
+    let message = ` *Upcoming Codeforces Contests*\n\n`;
+
+    contests.forEach((contest, index) => {
+      const startDate = new Date(contest.startTimeSeconds * 1000);
+      const durationMins = contest.durationSeconds / 60;
+      message += `*${index + 1}. ${contest.name}*\n🕒 Duration: ${
+        durationMins >= 60
+          ? `${durationMins / 60} hrs`
+          : `${durationMins} mins`
+      }\n Starts: ${format(startDate, "PPPppp")}\n\n`;
+    });
+
+    await ctx.reply(message.trim());
+
+    console.log(
+      chalk.green(
+        `[SUCCESS] Sent upcoming contests for id: ${ctx.from.id} (${ctx.from.username || "N/A"})`
+      )
+    );
+  } catch (error) {
+    console.error(chalk.red("[FATAL] Error in /contest command:"), error);
+    ctx.reply("Oops! Couldn't fetch contest list from Codeforces.");
+  }
+});
 
 // /status - Get your status(Rating) in all platforms
+bot.command("status", async (ctx) => {
+  try {
+    console.log(
+      chalk.cyan(
+        `[COMMAND] /status triggered by id:  ${ctx.from.id} and username: ${
+          ctx.from.username || "N/A"
+        }`
+      )
+    );
+
+    const user = await User.findOne({ telegramId: ctx.from.id });
+
+    if (!user) {
+      console.log(chalk.yellow("[WARN] User not found in database."));
+      return ctx.reply("No profile found. Please register your handles first.");
+    }
+
+    const { codeforcesId, codechefId, leetcodeId } = user;
+
+    if (!codeforcesId && !codechefId && !leetcodeId) {
+      return ctx.reply("You have not set up any platform handles yet.");
+    }
+
+    let message = "Your current ratings:\n";
+
+    if (codeforcesId) {
+      const cfRating = await getCodeforceRatingHistory(codeforcesId);
+      if (cfRating && cfRating.length > 0) {
+        const latest = cfRating[cfRating.length - 1];
+        message += `Codeforces: ${latest.newRating}\n`;
+      } else {
+        message += "Codeforces: Not available\n";
+      }
+    }
+
+    if (codechefId) {
+      const ccRating = await getCodeChefUserInfo(codechefId);
+      if (ccRating && ccRating.ratingData && ccRating.ratingData.length > 0) {
+        const latest = ccRating.ratingData[ccRating.ratingData.length - 1];
+        message += `CodeChef: ${latest.rating}\n`;
+      } else {
+        message += "CodeChef: Not available\n";
+      }
+    }
+
+    if (leetcodeId) {
+      const lcRating = await getLeetCodeRatingInfo(leetcodeId);
+      if (lcRating) {
+        message += `LeetCode: ${lcRating.rating}\n`;
+      } else {
+        message += "LeetCode: Not available\n";
+      }
+    }
+
+    await ctx.reply(message.trim());
+    console.log(
+      chalk.green(`[SUCCESS] Status sent for Telegram ID: ${ctx.from.id}`)
+    );
+  } catch (error) {
+    console.error(chalk.red("[FATAL] Error in /status command:"), error);
+    ctx.reply("Oops! Something went wrong while fetching your status.");
+  }
+});
 
 // /delete - Delete your profile from database
+bot.command("delete", async (ctx) => {
+  try {
+    console.log(
+      chalk.cyan(
+        `[COMMAND] /delete triggered by id: ${ctx.from.id} and username: ${
+          ctx.from.username || "N/A"
+        }`
+      )
+    );
 
-// /info - Get your profile info
+    const user = await User.findOne({ telegramId: ctx.from.id });
+    if (!user) {
+      console.log(chalk.yellow("[WARN] User not found in database."));
+      return ctx.reply("No profile found to delete.");
+    }
+
+    await User.deleteOne({ telegramId: ctx.from.id });
+
+    await ctx.reply("Your profile has been deleted successfully.");
+    console.log(
+      chalk.green(`[SUCCESS] Profile deleted for Telegram ID: ${ctx.from.id}`)
+    );
+  } catch (error) {
+    console.error(chalk.red("[FATAL] Error in /delete command:"), error);
+    ctx.reply("Oops! Something went wrong while deleting your profile.");
+  }
+});
+
+// /info - Get your profile info saved on db
+bot.command("info", async (ctx) => {
+  try {
+    console.log(
+      chalk.cyan(
+        `[COMMAND] /info triggered by id: ${ctx.from.id} and username: ${
+          ctx.from.username || "N/A"
+        }`
+      )
+    );
+
+    const user = await User.findOne({ telegramId: ctx.from.id });
+
+    if (!user) {
+      console.log(chalk.yellow("[WARN] User not found in database."));
+      return ctx.reply("No profile found. Please register your handles first.");
+    }
+
+    const {
+      leetcodeId = "Not set",
+      codeforcesId = "Not set",
+      codechefId = "Not set",
+      firstName = "",
+      lastName = "",
+      username = "N/A",
+    } = user;
+
+    const fullName = `${firstName} ${lastName}`.trim() || "N/A";
+
+    const message = `
+Your profile info:
+
+Name: ${fullName}
+Telegram Username: @${username}
+LeetCode: ${leetcodeId || "Not set"}
+Codeforces: ${codeforcesId || "Not set"}
+CodeChef: ${codechefId || "Not set"}
+    `.trim();
+
+    await ctx.reply(message);
+    console.log(
+      chalk.green(`[SUCCESS] /info response sent for Telegram ID: ${ctx.from.id}`)
+    );
+  } catch (error) {
+    console.error(chalk.red("[FATAL] Error in /info command:"), error);
+    ctx.reply("Oops! Something went wrong while fetching your profile info.");
+  }
+});
 
 // Setup command
 const userStates = new Map(); // Telegram user ID -> { stage, data } Structure- Map<telegramUserId, { stage: string, data?: object }>

@@ -32,7 +32,7 @@ export const getCodeforceRatingHistory = async (handle) => {
  * Fetch the list of upcoming/past Codeforces contests
  * Filters only upcoming contests if needed
  */
-export const getCodeforceContestList = async () => {
+export const getUpcomingCodeforcesContests = async () => {
   const API_URL = "https://codeforces.com/api/contest.list?gym=false";
 
   const response = await axios.get(API_URL);
@@ -40,5 +40,13 @@ export const getCodeforceContestList = async () => {
     throw new Error(response.data.comment || "API Error");
   }
 
-  return response.data.result; // This includes all contests (past and upcoming)
+  // Filter upcoming contests
+  const upcoming = response.data.result.filter(
+    (contest) => contest.phase === "BEFORE"
+  );
+
+  // Sort by start time and return top 3
+  return upcoming
+    .sort((a, b) => a.startTimeSeconds - b.startTimeSeconds)
+    .slice(0, 3);
 };

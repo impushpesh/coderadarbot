@@ -1,13 +1,16 @@
 import {
   getCodeforceUserInfo,
   getCodeforceRatingHistory,
-  getCodeforceContestList,
+  getUpcomingCodeforcesContests,
 } from "./codeforce.api.js";
 import { getCodeChefUserInfo } from "./codechef.api.js";
+import { getLeetCodeRatingInfo, getLeetCodePublicProfile } from "./leetcode.api.js";
 
 export {
   getCodeforceUserInfo,
   getCodeforceRatingHistory,
-  getCodeforceContestList,
+  getUpcomingCodeforcesContests,
   getCodeChefUserInfo,
+  getLeetCodeRatingInfo,
+  getLeetCodePublicProfile
 };
