@@ -3,7 +3,7 @@ import axios from "axios";
 /**
  * Fetch Codeforces user info (like rating, rank, etc.)
  */
-export const getUserInfo = async (handle) => {
+export const getCodeforceUserInfo = async (handle) => {
   const API_URL = `https://codeforces.com/api/user.info?handles=${handle}`;
 
   const response = await axios.get(API_URL);
@@ -17,7 +17,7 @@ export const getUserInfo = async (handle) => {
 /**
  * Fetch Codeforces rating history for a user
  */
-export const getRatingHistory = async (handle) => {
+export const getCodeforceRatingHistory = async (handle) => {
   const API_URL = `https://codeforces.com/api/user.rating?handle=${handle}`;
 
   const response = await axios.get(API_URL);
@@ -32,7 +32,7 @@ export const getRatingHistory = async (handle) => {
  * Fetch the list of upcoming/past Codeforces contests
  * Filters only upcoming contests if needed
  */
-export const getContestList = async () => {
+export const getCodeforceContestList = async () => {
   const API_URL = "https://codeforces.com/api/contest.list?gym=false";
 
   const response = await axios.get(API_URL);

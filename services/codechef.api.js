@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const getUserInfo = async (handle) => {
+export const getCodeChefUserInfo = async (handle) => {
   const API_URL = `https://codechef-api.vercel.app/handle/${handle}`;
 
   const response = await axios.get(API_URL);
