@@ -56,7 +56,7 @@ export const setupCommand = (bot) => {
       await User.updateOne({ telegramId: userId }, { $set: state.data });
       console.log(chalk.green(`[SUCCESS] User data saved for ${userId}:`), state.data);
 
-      ctx.reply("Setup complete! Your platform handles have been saved.");
+      ctx.reply("Setup complete! Your platform handles have been saved.\nYou can now use commands like /status to check your ratings. \n Use /help to see available commands.");
       userStates.delete(userId);
     }
   });

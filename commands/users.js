@@ -49,7 +49,10 @@ export const userCommands = (bot) => {
     }
 
     ctx.reply(
-      `Welcome ${ctx.from.first_name}!\n Use /help to see available commands.`
+      `Welcome <b>${ctx.from.first_name}!</b>\n Use /help to see available commands.`,
+      {
+        parse_mode: "HTML",
+      }
     );
   });
 
@@ -104,7 +107,7 @@ export const userCommands = (bot) => {
       if (!user) {
         console.log(chalk.yellow("[WARN] User not found in database."));
         return ctx.reply(
-          "No profile found. Please register your handles first."
+          "No profile found. Please register your handles first.\n Use: /start then /setup"
         );
       }
 
@@ -160,7 +163,7 @@ export const userCommands = (bot) => {
 
       await User.deleteOne({ telegramId: ctx.from.id });
 
-      await ctx.reply("Your profile has been deleted successfully.");
+      await ctx.reply("Your profile has been deleted successfully.\n Use /start to create a new profile.");
       console.log(
         chalk.green(`[SUCCESS] Profile deleted for Telegram ID: ${ctx.from.id}`)
       );

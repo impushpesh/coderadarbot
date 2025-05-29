@@ -65,7 +65,7 @@ export const contestCommands = (bot) => {
       if (!user) {
         console.log(chalk.yellow("[WARN] User not found in database."));
         return ctx.reply(
-          "No profile found. Please register your handles first:\n Use: /start"
+          "No profile found. Please register your handles first:\n Use: /setup"
         );
       }
 
