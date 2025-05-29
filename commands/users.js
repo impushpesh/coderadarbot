@@ -49,7 +49,7 @@ export const userCommands = (bot) => {
     }
 
     ctx.reply(
-      `Welcome <b>${ctx.from.first_name}!</b>\n Use /help to see available commands.`,
+      `Welcome <b>${ctx.from.first_name}!</b>\n Use /help to see available commands.\n Use /setup to set up your profile.`,
       {
         parse_mode: "HTML",
       }
@@ -67,26 +67,32 @@ export const userCommands = (bot) => {
     );
     ctx.reply(
       "<b>The list of available commands:</b>\n" +
+        "━━━━━━━━━━━━━━━━━━━━\n" +
         "<b>CodeForce</b>\n" +
-        "/codeforce - Get Codeforces user info\n" +
-        "/codeforceRating - Get Codeforces user rating\n" +
+        "• /codeforce - Get Codeforces user info\n" +
+        "• /codeforceRating - Get Codeforces user rating\n" +
         "           \n" +
+        "━━━━━━━━━━━━━━━━━━━━\n" +
         "<b>CodeChef</b>\n" +
-        "/codechef - Get CodeChef user info\n" +
-        "/codechefRating - Get CodeChef user rating\n" +
+        "• /codechef - Get CodeChef user info\n" +
+        "• /codechefRating - Get CodeChef user rating\n" +
         "           \n" +
+        "━━━━━━━━━━━━━━━━━━━━\n" +
         "<b>Leetcode</b>\n" +
-        "/leetcode - Get LeetCode user Info\n" +
-        "/leetcodeRating - Get LeetCode user rating\n" +
+        "• /leetcode - Get LeetCode user Info\n" +
+        "• /leetcodeRating - Get LeetCode user rating\n" +
         "           \n" +
+        "━━━━━━━━━━━━━━━━━━━━\n" +
         "<b>Others</b>\n" +
-        "/contest - Get Upcoming  contest list\n" + // From Codechef + Codeforces + Leetcode
-        "/status- Get your status across all platforms\n" + // Codeforces + Codechef + Leetcode
-        "/info - Get your profile info saved on db\n" + // Get user info from DB
-        "/setup - Set up your profile\n" + // Ask for user id of platforms- Codeforces, Codechef, Leetcode
+        "• /contest - Get Upcoming  contest list\n" + // From Codechef + Codeforces + Leetcode
+        "• /status- Get your status across all platforms\n" + // Codeforces + Codechef + Leetcode
+        "• /info - Get your profile info saved on db\n" + // Get user info from DB
+        "• /setup - Set up your profile\n" + // Ask for user id of platforms- Codeforces, Codechef, Leetcode
         "           \n" +
+        "━━━━━━━━━━━━━━━━━━━━\n" +
         " ❌ DANGER ZONE: ❌\n" +
-        "/delete - Delete your profile from database\n", // Delete user info from DB
+        "           \n" +
+        "• /delete - Delete your profile from database\n", // Delete user info from DB
       { parse_mode: "HTML" }
     );
   });
@@ -127,9 +133,21 @@ export const userCommands = (bot) => {
 
 <b>Name:</b> ${fullName}
 <b>Telegram Username:</b> @${username}
-<b>LeetCode:</b> ${leetcodeId ? `<a href="https://leetcode.com/${leetcodeId}">${leetcodeId}</a>` : "Not set"}
-<b>Codeforces:</b> ${codeforcesId ? `<a href="https://codeforces.com/profile/${codeforcesId}">${codeforcesId}</a>` : "Not set"}
-<b>CodeChef:</b> ${codechefId ? `<a href="https://www.codechef.com/users/${codechefId}">${codechefId}</a>` : "Not set"}
+<b>LeetCode:</b> ${
+        leetcodeId
+          ? `<a href="https://leetcode.com/${leetcodeId}">${leetcodeId}</a>`
+          : "Not set"
+      }
+<b>Codeforces:</b> ${
+        codeforcesId
+          ? `<a href="https://codeforces.com/profile/${codeforcesId}">${codeforcesId}</a>`
+          : "Not set"
+      }
+<b>CodeChef:</b> ${
+        codechefId
+          ? `<a href="https://www.codechef.com/users/${codechefId}">${codechefId}</a>`
+          : "Not set"
+      }
     `.trim();
 
       await ctx.reply(message, { parse_mode: "HTML" });
@@ -163,7 +181,9 @@ export const userCommands = (bot) => {
 
       await User.deleteOne({ telegramId: ctx.from.id });
 
-      await ctx.reply("Your profile has been deleted successfully.\n Use /start to create a new profile.");
+      await ctx.reply(
+        "Your profile has been deleted successfully.\n Use /start to create a new profile then proceed with /setup to set up your handles again."
+      );
       console.log(
         chalk.green(`[SUCCESS] Profile deleted for Telegram ID: ${ctx.from.id}`)
       );
