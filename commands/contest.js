@@ -22,19 +22,19 @@ export const contestCommands = (bot) => {
         return ctx.reply("No upcoming contests found.");
       }
 
-      let message = ` *Upcoming Codeforces Contests*\n\n`;
+      let message = ` <b>Upcoming Codeforces Contests</b>\n\n`;
 
       contests.forEach((contest, index) => {
         const startDate = new Date(contest.startTimeSeconds * 1000);
         const durationMins = contest.durationSeconds / 60;
-        message += `*${index + 1}. ${contest.name}*\n🕒 Duration: ${
+        message += `<b>${index + 1}. ${contest.name}</b>\n Duration: ${
           durationMins >= 60
             ? `${durationMins / 60} hrs`
             : `${durationMins} mins`
-        }\n Starts: ${format(startDate, "PPPppp")}\n\n`;
+        }\n <b>Starts: </b> ${format(startDate, "PPPppp")}\n\n`;
       });
 
-      await ctx.reply(message.trim());
+      await ctx.reply(message.trim(), { parse_mode: "HTML" });
 
       console.log(
         chalk.green(
@@ -65,25 +65,25 @@ export const contestCommands = (bot) => {
       if (!user) {
         console.log(chalk.yellow("[WARN] User not found in database."));
         return ctx.reply(
-          "No profile found. Please register your handles first."
+          "No profile found. Please register your handles first:\n Use: /start"
         );
       }
 
       const { codeforcesId, codechefId, leetcodeId } = user;
 
       if (!codeforcesId && !codechefId && !leetcodeId) {
-        return ctx.reply("You have not set up any platform handles yet.");
+        return ctx.reply("You have not set up any platform handles yet.\n Use: /setup");
       }
 
-      let message = "Your current ratings:\n";
+      let message = "<b>Your current ratings:</b>\n";
 
       if (codeforcesId) {
         const cfRating = await getCodeforceRatingHistory(codeforcesId);
         if (cfRating && cfRating.length > 0) {
           const latest = cfRating[cfRating.length - 1];
-          message += `Codeforces: ${latest.newRating}\n`;
+          message += `<b>Codeforces:</b> ${latest.newRating}\n`;
         } else {
-          message += "Codeforces: Not available\n";
+          message += "<b>Codeforces:</b> Not available\n";
         }
       }
 
@@ -91,22 +91,22 @@ export const contestCommands = (bot) => {
         const ccRating = await getCodeChefUserInfo(codechefId);
         if (ccRating && ccRating.ratingData && ccRating.ratingData.length > 0) {
           const latest = ccRating.ratingData[ccRating.ratingData.length - 1];
-          message += `CodeChef: ${latest.rating}\n`;
+          message += `<b>CodeChef:</b> ${latest.rating}\n`;
         } else {
-          message += "CodeChef: Not available\n";
+          message += "<b>CodeChef:</b> Not available\n";
         }
       }
 
       if (leetcodeId) {
         const lcRating = await getLeetCodeRatingInfo(leetcodeId);
         if (lcRating) {
-          message += `LeetCode: ${lcRating.rating}\n`;
+          message += `<b>LeetCode:</b> ${lcRating.rating}\n`;
         } else {
-          message += "LeetCode: Not available\n";
+          message += "<b>LeetCode:</b> Not available\n";
         }
       }
 
-      await ctx.reply(message.trim());
+      await ctx.reply(message.trim(), { parse_mode: "HTML" });
       console.log(
         chalk.green(`[SUCCESS] Status sent for Telegram ID: ${ctx.from.id}`)
       );

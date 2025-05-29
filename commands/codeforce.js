@@ -53,15 +53,15 @@ export const codeforceCommands = (bot) => {
     
         const name = `${firstName || ""} ${lastName || ""}`.trim();
     
-        const message = `Handle: ${handle}
+        const message = `<b>CodeForce Handle:</b> ${handle}
     Name: ${name || "N/A"}
     Country: ${country || "N/A"}
-    Rating: ${rating || "N/A"}
+    <b>Current Rating:</b> ${rating || "N/A"}
     Max Rating: ${maxRating || "N/A"}
-    Rank: ${rank || "N/A"}
+    <b>Current Rank:</b> ${rank || "N/A"}
     Max Rank: ${maxRank || "N/A"}`;
     
-        await ctx.replyWithPhoto({ url: titlePhoto }, { caption: message });
+        await ctx.replyWithPhoto({ url: titlePhoto }, { caption: message, parse_mode: "HTML" });
     
         console.log(
           chalk.green(
@@ -114,15 +114,15 @@ export const codeforceCommands = (bot) => {
         const ratingChange = currentRating - previousRating;
         const sign = ratingChange >= 0 ? "+" : "-";
     
-        const message = `Current Rating: ${currentRating}
-    Previous Rating: ${previousRating}
-    Rating Change: ${sign}${Math.abs(ratingChange)}`;
+        const message = `<b>Current Rating:</b> ${currentRating}
+    <b>Previous Rating:</b> ${previousRating}
+    <b>Rating Change:</b> ${sign}${Math.abs(ratingChange)}`;
     
         const chartBuffer = await generateRatingChartCodeforces(ratingHistory);
     
         await ctx.replyWithPhoto(
           { source: chartBuffer },
-          { caption: message }
+          { caption: message, parse_mode: "HTML"  }
         );
     
         console.log(
