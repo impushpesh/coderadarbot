@@ -14,6 +14,8 @@
     "@telegraf/session": "^2.0.0-beta.7",
     "axios": "^1.9.0",
     "chalk": "^5.4.1",
+    "chart.js": "^4.4.9",
+    "chartjs-node-canvas": "^5.0.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
     "mongoose": "^8.15.0",

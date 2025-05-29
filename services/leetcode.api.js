@@ -7,6 +7,19 @@ export const getLeetCodeRatingInfo = async (username) => {
         attendedContestsCount
         rating
       }
+      userContestRankingHistory(username: $username) {
+        attended
+        trendDirection
+        problemsSolved
+        totalProblems
+        finishTimeInSeconds
+        rating
+        ranking
+        contest {
+          title
+          startTime
+        }
+      }
     }
   `;
 
@@ -15,10 +28,7 @@ export const getLeetCodeRatingInfo = async (username) => {
   try {
     const response = await axios.post(
       "https://leetcode.com/graphql",
-      {
-        query,
-        variables,
-      },
+      { query, variables },
       {
         headers: {
           "Content-Type": "application/json",
@@ -26,14 +36,27 @@ export const getLeetCodeRatingInfo = async (username) => {
       }
     );
 
-    const data = response.data?.data?.userContestRanking;
-    if (!data || !data.attendedContestsCount || !data.rating) {
-      throw new Error("Invalid or missing user contest data");
+    const rankingInfo = response.data?.data?.userContestRanking;
+    const historyRaw = response.data?.data?.userContestRankingHistory;
+
+    if (!rankingInfo || !historyRaw || !Array.isArray(historyRaw)) {
+      throw new Error("LeetCode data is missing or invalid.");
     }
 
+    const attendedContests = historyRaw
+      .filter((entry) => entry.attended)
+      .map((entry) => ({
+        title: entry.contest.title,
+        startTime: entry.contest.startTime,
+        rating: entry.rating,
+        ranking: entry.ranking,
+        attended: entry.attended,
+      }));
+
     return {
-      attendedContestsCount: data.attendedContestsCount,
-      rating: Math.round(data.rating),
+      attendedContestsCount: rankingInfo.attendedContestsCount,
+      rating: rankingInfo.rating,
+      history: attendedContests,
     };
   } catch (err) {
     console.error("Error fetching LeetCode data:", err.message);
@@ -41,6 +64,8 @@ export const getLeetCodeRatingInfo = async (username) => {
   }
 };
 
+
+// To get public profile information
 export const getLeetCodePublicProfile = async (username) => {
   const query = `
     query userPublicProfile($username: String!) {
@@ -93,3 +118,6 @@ export const getLeetCodePublicProfile = async (username) => {
     return null;
   }
 };
+
+
+

@@ -2,13 +2,17 @@ import { Telegraf } from "telegraf";
 import chalk from "chalk";
 import { format } from "date-fns";
 
+import { generateRatingChartCodeforces } from "./utils/codeforcechartGenerator.js";
+import { generateLeetCodeChart } from './utils/leetcodeChartGenerator.js';
+
+
 import {
   getCodeforceUserInfo,
   getCodeChefUserInfo,
   getUpcomingCodeforcesContests,
   getCodeforceRatingHistory,
   getLeetCodeRatingInfo,
-  getLeetCodePublicProfile
+  getLeetCodePublicProfile,
 } from "./services/index.js";
 
 import dotenv from "dotenv";
@@ -208,10 +212,16 @@ bot.command("codeforceRating", async (ctx) => {
 Previous Rating: ${previousRating}
 Rating Change: ${sign}${Math.abs(ratingChange)}`;
 
-    await ctx.reply(message);
+    const chartBuffer = await generateRatingChartCodeforces(ratingHistory);
+
+    await ctx.replyWithPhoto(
+      { source: chartBuffer },
+      { caption: message }
+    );
+
     console.log(
       chalk.green(
-        `[SUCCESS] Rating change sent for id:  ${ctx.from.id} and username: ${
+        `[SUCCESS] Rating change + chart sent for id:  ${ctx.from.id} and username: ${
           ctx.from.username || "N/A"
         }`
       )
@@ -221,7 +231,7 @@ Rating Change: ${sign}${Math.abs(ratingChange)}`;
       chalk.red("[FATAL] Error in /codeforceRating command:"),
       error
     );
-    ctx.reply("Oops! Something went wrong while fetching your CodeForce info.");
+    ctx.reply("Oops! Something went wrong while fetching your Codeforces info.");
   }
 });
 
@@ -435,21 +445,41 @@ bot.command("leetcodeRating", async (ctx) => {
 
     const userInfo = await getLeetCodeRatingInfo(user.leetcodeId);
 
-    if (!userInfo) {
+    if (!userInfo || !userInfo.history || userInfo.history.length === 0) {
       return ctx.reply("Could not fetch your LeetCode contest data.");
     }
 
     const { attendedContestsCount, rating } = userInfo;
+    const history = userInfo.history.filter(entry => entry.attended);
 
-    const message = `LeetCode Contest Stats:
-Attended Contests: ${attendedContestsCount}
-Current Rating: ${rating}`;
+    if (history.length < 2) {
+      return ctx.reply("Not enough attended contests to generate rating chart.");
+    }
 
-    await ctx.reply(message);
+    const latest = history[history.length - 1];
+    const previous = history[history.length - 2];
+
+    const ratingChange = (latest.rating - previous.rating).toFixed(2);
+    const rankingChange = latest.ranking - previous.ranking;
+    const ratingSign = ratingChange >= 0 ? "+" : "";
+    const rankingSign = rankingChange <= 0 ? "+" : "-";
+
+    const chartBuffer = await generateLeetCodeChart(userInfo.history);
+
+    const message = `📊 LeetCode Contest Stats:
+• Attended Contests: ${attendedContestsCount}
+• Current Rating: ${rating.toFixed(2)}
+• Previous Rating: ${previous.rating.toFixed(2)}
+• Rating Change: ${ratingSign}${ratingChange}
+• Current Rank: ${latest.ranking}
+• Previous Rank: ${previous.ranking}
+• Rank Change: ${rankingSign}${Math.abs(rankingChange)}`;
+
+    await ctx.replyWithPhoto({ source: chartBuffer }, { caption: message });
 
     console.log(
       chalk.green(
-        `[SUCCESS] LeetCode rating sent for id: ${
+        `[SUCCESS] LeetCode rating chart sent for id: ${
           ctx.from.id
         } and username: ${ctx.from.username || "N/A"}`
       )
