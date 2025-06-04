@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import User from "../models/user.model.js";
+import UserData from "../models/userData.model.js";
 
 import {
   getCodeforceUserInfo,
@@ -31,15 +32,44 @@ export const codeforceCommands = (bot) => {
         );
       }
 
-      const userInfo = await getCodeforceUserInfo(user.codeforcesId);
+      let userDatafromdb = await UserData.findOne({ telegramID: user._id });
 
-      if (!userInfo) {
-        console.log(
-          chalk.red("[ERROR] Failed to fetch user info from Codeforces.")
-        );
-        return ctx.reply(
-          "Failed to fetch Codeforces user info. Please check your username from /info command."
-        );
+      let codeforcesProfile = userDatafromdb?.codeforces;
+
+      if (!codeforcesProfile) {
+        console.log(chalk.blue("[INFO] Fetching Codeforces data from API..."));
+        const apiData = await getCodeforceUserInfo(user.codeforcesId);
+
+        if (!apiData) {
+          console.log(
+            chalk.red("[ERROR] Failed to fetch Codeforces data from API.")
+          );
+          return ctx.reply(
+            "Failed to fetch Codeforces user info. Please check your username from /info command."
+          );
+        }
+
+        codeforcesProfile = apiData;
+
+        if (userDatafromdb) {
+          // ✅ Update existing document
+          userDatafromdb.codeforces = apiData;
+          await userDatafromdb.save();
+          console.log(
+            chalk.green("[INFO] Updated existing Codeforces profile in DB.")
+          );
+        } else {
+          // ✅ Create new document
+          await UserData.create({
+            telegramID: user._id,
+            codeforces: apiData,
+          });
+          console.log(
+            chalk.green("[INFO] Created new UserData with Codeforces profile.")
+          );
+        }
+      } else {
+        console.log(chalk.green("[CACHE HIT] Using saved Codeforces data."));
       }
 
       const {
@@ -52,7 +82,7 @@ export const codeforceCommands = (bot) => {
         rank,
         maxRank,
         titlePhoto,
-      } = userInfo;
+      } = codeforcesProfile;
 
       const name = `${firstName || ""} ${lastName || ""}`.trim();
 
@@ -128,6 +158,7 @@ export const codeforceCommands = (bot) => {
       const rankChange = previous.rank - latest.rank;
       const rankingSign = rankChange >= 0 ? "+" : "-";
 
+      //TODO: Generating the chart each time can slow down the bot, so theres should be limit on how many times the user can call this command 
       const chartBuffer = await generateRatingChartCodeforces(ratingHistory);
 
       const message = `📊 <b>Codeforces Contest Stats:</b>

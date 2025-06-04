@@ -162,7 +162,7 @@ export const userCommands = (bot) => {
     }
   });
 
-  // /delete - Delete your profile from database
+  // /delete - Delete your profile from database TODO: Have to configure this command so that there will be a cooling period before deletion of profile
   bot.command("delete", async (ctx) => {
     try {
       console.log(
