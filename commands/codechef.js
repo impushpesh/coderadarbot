@@ -1,7 +1,9 @@
 import chalk from "chalk";
 import User from "../models/user.model.js";
+import CodechefProfileModel from "../models/codechefProfile.model.js";
 
 import { getCodeChefUserInfo } from "../services/index.js";
+import UserData from "../models/userData.model.js";
 
 export const codechefCommands = (bot) => {
   // /codechef - Get CodeChef user info
@@ -26,15 +28,96 @@ export const codechefCommands = (bot) => {
         );
       }
 
-      const userInfo = await getCodeChefUserInfo(user.codechefId);
+      // Find userData document for this Telegram user
+      let userData = await UserData.findOne({ telegramID: user._id });
 
-      if (!userInfo) {
-        console.log(chalk.red("[ERROR] Failed to fetch CodeChef user info."));
-        return ctx.reply(
-          "Failed to fetch codechef user info. Please check your username. from /info command."
-        );
+      // Find an existing CodeChef profile by handle
+      const ccHandle = user.codechefId;
+      let profileDoc = await CodechefProfileModel.findOne({ handle: ccHandle });
+
+      if (!userData || !userData.codechef) {
+        // If no profileDoc yet, fetch from API and create one
+        if (!profileDoc) {
+          console.log(
+            chalk.blue(
+              "[INFO] No existing CodeChef profile found. Fetching from API..."
+            )
+          );
+          const apiData = await getCodeChefUserInfo(ccHandle);
+
+          if (!apiData) {
+            console.log(
+              chalk.red("[ERROR] Failed to fetch CodeChef data from API.")
+            );
+            return ctx.reply(
+              "Failed to fetch CodeChef user info. Please check your username with /info command."
+            );
+          }
+
+          // Create a new CodeChefProfile document
+          profileDoc = await CodechefProfileModel.create(apiData);
+          console.log(chalk.green("[INFO] Created new CodechefProfile in DB."));
+        } else {
+          console.log(
+            chalk.green("[CACHE HIT] Found existing CodeforcesProfile in DB.")
+          );
+        }
+
+        if (userData) {
+          userData.codechef = profileDoc._id;
+          await userData.save();
+          console.log(
+            chalk.green("[INFO] Linked existing CC profile to UserData.")
+          );
+        } else {
+          userData = await UserData.create({
+            telegramID: user._id,
+            codechef: profileDoc._id,
+          });
+          console.log(
+            chalk.green("[INFO] Created new UserData and linked CF profile.")
+          );
+        }
+      } else {
+        profileDoc = await CodechefProfileModel.findById(userData.codechef);
+        if (!profileDoc) {
+          console.log(
+            chalk.yellow(
+              "[WARN] userData.codechef pointed to a missing profile. Re-creating/linking..."
+            )
+          );
+          const apiData = await getCodeChefUserInfo(ccHandle);
+          if (!apiData) {
+            console.log(
+              chalk.red("[ERROR] Failed to fetch CodeChef data from API.")
+            );
+            return ctx.reply(
+              "Failed to fetch CodeChef user info. Please check your username with /info command."
+            );
+          }
+          profileDoc = await CodechefProfileModel.findOneAndUpdate(
+            {
+              handle: ccHandle,
+            },
+            apiData,
+            {
+              upsert: true,
+              new: true,
+            }
+          );
+          userData.codechef = profileDoc._id;
+          await userData.save();
+          console.log(
+            chalk.green("[INFO] Re-linked or re-created missing CC profile.")
+          );
+        } else{
+          console.log(
+            chalk.green(
+              "[CACHE HIT] Using saved CodeChefProfile from UserData."
+            )
+          );
+        }
       }
-
       const {
         profile,
         name,
@@ -44,7 +127,7 @@ export const codechefCommands = (bot) => {
         countryRank,
         countryName,
         stars,
-      } = userInfo;
+      } = profileDoc;
 
       const message = `<b>CodeChef Handle:</b>
 <b>Name:</b> ${name || "N/A"}
@@ -55,7 +138,10 @@ Global Rank: ${globalRank || "N/A"}
 Country Rank: ${countryRank || "N/A"}
 <b>Stars:</b> ${stars || "N/A"}`;
 
-      await ctx.replyWithPhoto({ url: profile }, { caption: message, parse_mode: "HTML" });
+      await ctx.replyWithPhoto(
+        { url: profile },
+        { caption: message, parse_mode: "HTML" }
+      );
       console.log(
         chalk.green(
           `[SUCCESS] CodeChef user info sent for id:  ${
@@ -70,7 +156,6 @@ Country Rank: ${countryRank || "N/A"}
       );
     }
   });
-
 
   // /codechefRating - Get CodeChef user rating
   bot.command("codechefRating", async (ctx) => {

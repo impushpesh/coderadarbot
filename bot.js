@@ -6,7 +6,7 @@ import { registerCommands } from "./commands/index.js";
 
 dotenv.config();
 
-await connectDB();
+await connectDB(); 
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 

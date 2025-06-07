@@ -42,5 +42,5 @@ const leetcodeProfileSchema = new mongoose.Schema(
   }
 );
 
-const LeetcodeProfile = mongoose.model("LeetcodeProfile", leetcodeProfileSchema);
-export default LeetcodeProfile;
+const LeetcodeProfileModel = mongoose.model("LeetcodeProfile", leetcodeProfileSchema);
+export default LeetcodeProfileModel;

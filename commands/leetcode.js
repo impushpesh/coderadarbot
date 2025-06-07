@@ -1,5 +1,7 @@
 import chalk from "chalk";
 import User from "../models/user.model.js";
+import UserData from "../models/userData.model.js";
+import LeetcodeProfileModel from "../models/leetcodeProfile.model.js";
 
 import {
   getLeetCodePublicProfile,
@@ -31,17 +33,99 @@ export const leetcodeCommands = (bot) => {
         );
       }
 
-      const userInfo = await getLeetCodePublicProfile(user.leetcodeId);
+      let userData = await UserData.findOne({ telegramID: user._id });
 
-      if (!userInfo) {
-        console.log(chalk.red("[ERROR] Failed to fetch LeetCode user info."));
-        return ctx.reply(
-          "Failed to fetch LeetCode user info. Please check your username from the /info command."
-        );
+      const lcHandle = user.leetcodeId;
+      let profileDoc = await LeetcodeProfileModel.findOne({ username: lcHandle });
+
+      if (!userData || !userData.leetcode) {
+        // If no profileDoc yet, fetch from API and create one
+        if (!profileDoc) {
+          console.log(
+            chalk.blue(
+              "[INFO] No existing LeetCode profile found. Fetching from API..."
+            )
+          );
+          const apiData = await getLeetCodePublicProfile(lcHandle);
+
+          if (!apiData) {
+            console.log(
+              chalk.red("[ERROR] Failed to fetch LeetCode data from API.")
+            );
+            return ctx.reply(
+              "Failed to fetch LeetCode user info. Please check your username with /info."
+            );
+          }
+
+          profileDoc = await LeetcodeProfileModel.create(apiData);
+          console.log(chalk.green("[INFO] Created new LeetcodeProfile in DB."));
+        } else {
+          console.log(
+            chalk.green("[CACHE HIT] Found existing LeetcodeProfile in DB.")
+          );
+        }
+
+        if (userData) {
+          userData.leetcode = profileDoc._id;
+          await userData.save();
+          console.log(
+            chalk.green("[INFO] Linked existing Leetcode profile to UserData.")
+          );
+        } else {
+          userData = await UserData.create({
+            telegramID: user._id,
+            leetcode: profileDoc._id,
+          });
+          console.log(
+            chalk.green(
+              "[INFO] Created new UserData and linked Leetcode profile."
+            )
+          );
+        }
+      } else {
+        // userData exists AND userData.leetcode is already set
+        profileDoc = await LeetcodeProfileModel.findById(userData.leetcode);
+
+        if (!profileDoc) {
+          console.log(
+            chalk.yellow(
+              "[WARN] userData.leetcode pointed to a missing profile. Re-creating/linking..."
+            )
+          );
+
+          const apiData = await getLeetCodePublicProfile(lcHandle);
+
+          if (!apiData) {
+            return ctx.reply(
+              "Failed to re-fetch LeetCode info. Please check your username."
+            );
+          }
+
+          profileDoc = await LeetcodeProfileModel.findOneAndUpdate(
+            { username: lcHandle },
+            apiData,
+            { upsert: true, new: true }
+          );
+
+          userData.leetcode = profileDoc._id;
+          await userData.save();
+
+          console.log(
+            chalk.green(
+              "[INFO] Re-linked or re-created missing Leetcode profile."
+            )
+          );
+        } else {
+          console.log(
+            chalk.green(
+              "[CACHE HIT] Using saved LeetcodeProfile from UserData."
+            )
+          );
+        }
       }
 
       const { badge, avatar, ranking, country, linkedin, github, twitter } =
-        userInfo;
+        profileDoc;
 
       const message = `
     <b>LeetCode ID:</b> ${user.leetcodeId}

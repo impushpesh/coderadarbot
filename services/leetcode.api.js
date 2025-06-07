@@ -105,6 +105,7 @@ export const getLeetCodePublicProfile = async (username) => {
     }
 
     return {
+      username: username,
       badge: user.contestBadge?.name || "No badge",
       avatar: user.profile?.userAvatar || null,
       ranking: user.profile?.ranking ?? "N/A",

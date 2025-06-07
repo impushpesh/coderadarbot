@@ -8,5 +8,5 @@ export const getCodeChefUserInfo = async (handle) => {
     throw new Error("API Error");
   }
 
-  return response.data;
+  return {...response.data, handle};
 };

@@ -40,5 +40,5 @@ const codechefProfileSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-const CodechefProfile = mongoose.model("CodechefProfile", codechefProfileSchema);
-export default CodechefProfile;
+const CodechefProfileModel = mongoose.model("CodechefProfile", codechefProfileSchema);
+export default CodechefProfileModel;
