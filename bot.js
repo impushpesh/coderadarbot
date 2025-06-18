@@ -21,11 +21,11 @@ bot.launch();
 console.log(chalk.green("[INFO] Bot is running..."));
 
 // Agenda setup
-agenda.on("ready", async () => {
-  console.log(chalk.green("[INFO] Agenda is ready..."));
-  agenda.start();
-  await agenda.every("5 seconds", "send_ping");
-});
+// agenda.on("ready", async () => {
+//   console.log(chalk.green("[INFO] Agenda is ready..."));
+//   agenda.start();
+//   await agenda.every("5 seconds", "send_ping");
+// });
 
 bot.catch((err) => {
   console.error(chalk.red("[FATAL] Error occurred:"), err);

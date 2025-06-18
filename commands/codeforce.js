@@ -100,6 +100,32 @@ export const codeforceCommands = (bot) => {
           console.log(chalk.green("[CACHE HIT] Using saved CodeforcesProfile from UserData."));
         }
       }
+      
+      // Checking the timestamp to see if the profileDoc is outdated (more than 24 hrs)
+      if(profileDoc){
+        const now = Date.now();
+        const lastUpdate = new Date(profileDoc.updatedAt).getTime();
+        const oneDayMs  = 24 * 60 * 60 * 1000;
+
+        if(now-lastUpdate > oneDayMs){
+          console.log(chalk.blue("[INFO] Cached CF profile is older than 24h. Refetching..."));
+          const apiData = await getCodeforceUserInfo(cfHandle);
+          if(apiData){
+            await codeforcesProfileModel.findByIdAndUpdate(
+              profileDoc._id,
+              {...apiData},
+              { new: true, runValidators: true }
+            );
+            profileDoc = await codeforcesProfileModel.findById(profileDoc._id);
+            console.log(chalk.green("[INFO] CodeforcesProfile refreshed and saved."));
+
+          }else{
+            console.log(chalk.red("[ERROR] Failed to fetch updated Codeforces data from API."));
+          }
+        }else{
+          console.log(chalk.green("[CACHE HIT] CF profile is fresh (<24h)."));
+        }
+      }
 
       const {
         handle,

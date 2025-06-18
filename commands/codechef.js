@@ -118,6 +118,36 @@ export const codechefCommands = (bot) => {
           );
         }
       }
+
+      // Checking the timestamp to see if the profileDoc is outdated (more than 4 days)
+      if(profileDoc){
+        const now = Date.now();
+        const lastUpdate = new Date(profileDoc.updatedAt).getTime();
+        const fourDayMs  = 4* 24 * 60 * 60 * 1000;
+
+        if(now-lastUpdate > fourDayMs){
+          console.log(chalk.yellow("[WARN] CodeChef profile is outdated. Re-fetching..."));
+          const apiData = await getCodeChefUserInfo(ccHandle);
+          if (apiData) {
+            profileDoc = await CodechefProfileModel.findByIdAndUpdate(
+              profileDoc._id,
+              {...apiData},
+              { new: true, runValidators: true }
+            );
+            profileDoc = await CodechefProfileModel.findById(profileDoc._id);
+            console.log(chalk.green("[INFO] CodeChefProfile refreshed and saved."));
+          }else{
+            console.log(chalk.red("[ERROR] Failed to fetch updated CodeChef data from API."));
+          }
+          
+          
+        }else{
+          console.log(chalk.green("[CACHE HIT] CodeChef profile is fresh (<4 days)."));
+
+        }
+      }
+
+
       const {
         profile,
         name,

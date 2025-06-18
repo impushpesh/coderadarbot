@@ -124,6 +124,34 @@ export const leetcodeCommands = (bot) => {
         }
       }
 
+      // Checking the timestamp to see if the profileDoc is outdated (more than 24 hrs)
+      if(profileDoc){
+        const now = Date.now();
+        const lastUpdate = new Date(profileDoc.updatedAt).getTime();
+        const oneDayMs  =  24 * 60 * 60 * 1000;
+
+        if(now-lastUpdate > oneDayMs){
+          console.log(chalk.yellow("[WARN] Leetcode profile is outdated. Re-fetching..."));
+          const apiData = await getLeetCodePublicProfile(lcHandle);
+          if (apiData) {
+            profileDoc = await LeetcodeProfileModel.findByIdAndUpdate(
+              profileDoc._id,
+              {...apiData},
+              { new: true, runValidators: true }
+            );
+            profileDoc = await LeetcodeProfileModel.findById(profileDoc._id);
+            console.log(chalk.green("[INFO] Leetcode Profile refreshed and saved."));
+          }else{
+            console.log(chalk.red("[ERROR] Failed to fetch updated LeetCode data from API."));
+          }
+          
+          
+        }else{
+          console.log(chalk.green("[CACHE HIT] Leetcode profile is fresh (<4 days)."));
+
+        }
+      }
+
       const { badge, avatar, ranking, country, linkedin, github, twitter } =
         profileDoc;
 
