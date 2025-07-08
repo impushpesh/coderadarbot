@@ -1,0 +1,1 @@
+// This job fetches the latest contests from Codeforces and updates the database.
