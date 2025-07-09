@@ -1,0 +1,1 @@
+// This job  deletes old contests from the database

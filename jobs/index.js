@@ -3,8 +3,7 @@ import dotenv from "dotenv";
 
 //importing job definitions
 import { defineCodeforceRatingChange } from "./definitions/codeforceRatingChange.js";
-import { defineLeetcodeRatingChange } from "./definitions/leetcodeRatingChange.js";
-import defineSendPing from "./definitions/ping.js";
+//import { defineLeetcodeRatingChange } from "./definitions/leetcodeRatingChange.js";
 
 dotenv.config();
 
@@ -17,22 +16,18 @@ const agenda = new Agenda({
 
 // Register each job “definition”
 defineCodeforceRatingChange(agenda);
-defineLeetcodeRatingChange(agenda);
-defineSendPing(agenda);
+// defineLeetcodeRatingChange(agenda);
 
 // Configuring agenda
 agenda.on("ready", async () => {
   console.log("[INFO] Agenda ready; scheduling jobs…");
 
-  // every 5 seconds just for testing:
-  await agenda.every("5 seconds", "send_ping");
-
-  await agenda.every(
-    {
-      cron: "0 8,15,23 * * 4-0", // every Thu–Sun at 8,15,23
-    },
-    "leetcode:ratingChange"
-  );
+  // await agenda.every(
+  //   {
+  //     cron: "0 8,15,23 * * 4-0", // every Thu–Sun at 8,15,23
+  //   },
+  //   "leetcode:ratingChange"
+  // );
   // await agenda.every(
   //   {
   //       cron: "0" // ! Will have to make it dynamic to change based on latest contest

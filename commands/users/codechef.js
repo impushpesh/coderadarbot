@@ -1,9 +1,9 @@
 import chalk from "chalk";
-import User from "../models/user.model.js";
-import CodechefProfileModel from "../models/codechefProfile.model.js";
+import User from "../../models/user.model.js";
+import CodechefProfileModel from "../../models/codechefProfile.model.js";
 
-import { getCodeChefUserInfo } from "../services/index.js";
-import UserData from "../models/userData.model.js";
+import { getCodeChefUserInfo } from "../../services/index.js";
+import UserData from "../../models/userData.model.js";
 
 export const codechefCommands = (bot) => {
   // /codechef - Get CodeChef user info

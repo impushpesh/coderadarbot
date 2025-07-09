@@ -1,0 +1,1 @@
+// checks if the user is banned or not.

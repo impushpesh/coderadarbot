@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import User from "../models/user.model.js";
+import User from "../../models/user.model.js";
 
 export const userCommands = (bot) => {
   // START command
@@ -192,4 +192,6 @@ export const userCommands = (bot) => {
       ctx.reply("Oops! Something went wrong while deleting your profile.");
     }
   });
+
+  
 };

@@ -8,6 +8,10 @@ const leetcodeProfileSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    rating: {
+      type: Number,
+      default: 0,
+    },
     badge: {
       type: String,
       default: "No badge",

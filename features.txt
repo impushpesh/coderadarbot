@@ -1,3 +1,16 @@
-Next- implement hitApi and updateUsers in db then ping user for update.
-2. apply rate limit
-3. pdf generation for detailed analysis
+ToDO-
+contest.js, fetcher.js, contestDeleter.js, upcomingContest.model.js---- 
+To implement- 
+    - Fetch contest details and save it to DB and return response to user from the DB itself
+    - Implement fetcher job that fetches the contest details
+    - Implement contestDeleter that automatically deletes old contests from db.
+
+Implement leetcode job
+
+Implement if user have only one profile out of given platform
+
+Implement rate limiter
+
+----------------------------------
+
+// Implement winston logger----priority

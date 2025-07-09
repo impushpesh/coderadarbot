@@ -1,14 +1,14 @@
 import chalk from "chalk";
-import User from "../models/user.model.js";
-import UserData from "../models/userData.model.js";
-import codeforcesProfileModel from "../models/codeforceProfile.model.js";
+import User from "../../models/user.model.js";
+import UserData from "../../models/userData.model.js";
+import codeforcesProfileModel from "../../models/codeforceProfile.model.js";
 
 import {
   getCodeforceUserInfo,
   getCodeforceRatingHistory,
-} from "../services/index.js";
+} from "../../services/index.js";
 
-import { generateRatingChartCodeforces } from "../utils/codeforcechartGenerator.js";
+import { generateRatingChartCodeforces } from "../../utils/codeforcechartGenerator.js";
 
 export const codeforceCommands = (bot) => {
   // /codeforce - Get Codeforces user info

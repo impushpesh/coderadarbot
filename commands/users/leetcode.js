@@ -1,14 +1,14 @@
 import chalk from "chalk";
-import User from "../models/user.model.js";
-import UserData from "../models/userData.model.js";
-import LeetcodeProfileModel from "../models/leetcodeProfile.model.js";
+import User from "../../models/user.model.js";
+import UserData from "../../models/userData.model.js";
+import LeetcodeProfileModel from "../../models/leetcodeProfile.model.js";
 
 import {
   getLeetCodePublicProfile,
   getLeetCodeRatingInfo,
-} from "../services/index.js";
+} from "../../services/index.js";
 
-import { generateLeetCodeChart } from "../utils/leetcodeChartGenerator.js";
+import { generateLeetCodeChart } from "../../utils/leetcodeChartGenerator.js";
 
 export const leetcodeCommands = (bot) => {
   // /leetcode - Get LeetCode user Info

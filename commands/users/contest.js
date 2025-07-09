@@ -1,8 +1,8 @@
 import chalk from "chalk";
 import { format } from "date-fns";
-import User from "../models/user.model.js";
+import User from "../../models/user.model.js";
 
-import {getUpcomingCodeforcesContests, getCodeforceRatingHistory, getCodeChefUserInfo, getLeetCodeRatingInfo} from "../services/index.js"
+import {getUpcomingCodeforcesContests, getCodeforceRatingHistory, getCodeChefUserInfo, getLeetCodeRatingInfo} from "../../services/index.js"
 
 export const contestCommands = (bot) => {
   // /contest - Get Upcoming contest list
@@ -69,9 +69,9 @@ export const contestCommands = (bot) => {
         );
       }
 
-      const { codeforcesId, codechefId, leetcodeId } = user;
+      const { codeforcesId, leetcodeId } = user;
 
-      if (!codeforcesId && !codechefId && !leetcodeId) {
+      if (!codeforcesId && !leetcodeId) {
         return ctx.reply("You have not set up any platform handles yet.\n Use: /setup");
       }
 
@@ -84,16 +84,6 @@ export const contestCommands = (bot) => {
           message += `<b>Codeforces:</b> ${latest.newRating}\n`;
         } else {
           message += "<b>Codeforces:</b> Not available\n";
-        }
-      }
-
-      if (codechefId) {
-        const ccRating = await getCodeChefUserInfo(codechefId);
-        if (ccRating && ccRating.ratingData && ccRating.ratingData.length > 0) {
-          const latest = ccRating.ratingData[ccRating.ratingData.length - 1];
-          message += `<b>CodeChef:</b> ${latest.rating}\n`;
-        } else {
-          message += "<b>CodeChef:</b> Not available\n";
         }
       }
 

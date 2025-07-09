@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import User from "../models/user.model.js";
-import { getCodeforceUserInfo } from "../services/index.js"; // Adjust this import as needed
+import User from "../../models/user.model.js";
+import { getCodeforceUserInfo } from "../../services/index.js"; // Adjust this import as needed
 
 // Store user setup progress
 const userStates = new Map(); // Map<telegramUserId, { stage: string, data?: object }>
@@ -26,10 +26,10 @@ export const setupCommand = (bot) => {
   });
 
   // Handle user text input step-by-step
-  bot.on("text", async (ctx) => {
+  bot.on("text", async (ctx,next) => {
     const userId = ctx.from.id;
     const state = userStates.get(userId);
-    if (!state) return;
+    if (!state) return next(); // No setup in progress for this user
 
     const input = ctx.message.text.trim();
 
