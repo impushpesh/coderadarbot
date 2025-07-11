@@ -1,23 +1,45 @@
 ToDO-
-contest.js, fetcher.js, contestDeleter.js, upcomingContest.model.js---- 
-To implement- 
-    - Fetch contest details and save it to DB and return response to user from the DB itself
-    - Implement fetcher job that fetches the contest details
-    - Implement contestDeleter that automatically deletes old contests from db.
+--------------------------------------------------------------------------
+1.  contest.js, fetcher.js, contestDeleter.js, upcomingContest.model.js---- 
+2.  To implement- 
+        - Fetch contest details and save it to DB and return response to user from the DB itself
+        - Implement fetcher job that fetches the contest details
+        - Implement contestDeleter that automatically deletes old contests from db.
 
-Implement leetcode job
+3.  Implement leetcode job
 
-Implement if user have only one profile out of given platform
+4.  Implement if user have only one profile out of given platform
 
-Implement rate limiter
+5.  Implement rate limiter
 
-Thinking to implement pm2 for advanced monitoring- will help in admin featre
+6. Thinking to implement pm2 for advanced monitoring- will help in admin featre
 
-After implementing express, can implement node clusters to serve multiple users- it uses round robbin algo.
-Also can make a separate cluster dedicated only to admin to serve on priority basis.
+7.  After implementing express, can implement node clusters to serve multiple users- it uses round robbin algo.
+    Also can make a separate cluster dedicated only to admin to serve on priority basis.
+    NOTE- Only implement after implementing webhook
+                IMPLEMENTING CLUSTER AND PM2------WITH EXPRESS SERVER
+                Resource- https://betterstack.com/community/guides/scaling-nodejs/pm2-guide/#step-11-clustering-with-pm2
+                          https://www.youtube.com/watch?v=JoPZ9gEvpz8
 
-implement monitor to monitor logs. -- https://betterstack.com/telemetry
-----------------------------------
+8.  [DONE]                               implement monitor to monitor logs. -- https://betterstack.com/telemetry
+
+9.  To implement express route for admin only so that we dont have to touch the commands- this is the logic we will follow
+                                [Express Route]
+                                |
+                                | (has Telegram ID of admin)
+                                ↓
+                                [Create fake ctx with from.id and reply()]
+                                ↓
+                                [Call existing bot command logic]
+                                ↓
+                                [Command runs and sends reply via res.json()]
+
+10. First admin have to send an `/adminLogin` command then if the telegram id will match with the provided admin id in .env, then only it will prompt
+    for password. If password is correct then->create a short session->then enable admin commands.
+    (make a separate db for admin id+password)---also use jwt+bcrypt password......last step after implementing everything.
+
+-----------------------------------------------------------------------------------------------------------------------
+                    IMPLEMENTING LOGGER
 Steps-
 // Implement winston logger----priority
     - Different logs have different time. -better stack for reference
@@ -74,3 +96,8 @@ fatal-
     [SYSTEM]- fatal error related to server/system
     [DB]- fatal error related to db
     [COMMAND] - fatal error related to commands
+------------------------------------------------------------------------------------------------------------
+                
+
+
+                
