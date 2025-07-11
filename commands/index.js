@@ -7,7 +7,11 @@ import { codechefCommands } from "./users/codechef.js";
 import { leetcodeCommands } from "./users/leetcode.js";
 
 // Admin commands
-import { systemCommands } from "./admin/systemCommand.js";
+import { systemCommands } from "./admin/systemCommands.js";
+import { logCommands } from "./admin/logCommands.js";
+import {dbCommands} from "./admin/dbCommands.js";
+import { jobCommands } from "./admin/jobCommands.js";
+import { userManagementCommands } from "./admin/userManagementCommands.js";
 
 export const registerCommands = (bot) => {
     // User commands
@@ -20,5 +24,8 @@ export const registerCommands = (bot) => {
 
     // Admin commands
     systemCommands(bot);
-    
+    logCommands(bot);
+    dbCommands(bot);
+    jobCommands(bot);
+    userManagementCommands(bot);
 }

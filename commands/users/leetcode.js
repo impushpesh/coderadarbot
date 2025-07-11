@@ -163,6 +163,7 @@ export const leetcodeCommands = (bot) => {
       const userInfo = await getLeetCodeRatingInfo(user.leetcodeId);
 
       if (!userInfo || !userInfo.history || userInfo.history.length === 0) {
+        logger.warn(`[API_ERROR] [leetcodeCommands] Failed to fetch LeetCode rating info for id: ${ctx.from.id}`);
         return ctx.reply("Could not fetch your LeetCode contest data.");
       }
 
@@ -170,6 +171,7 @@ export const leetcodeCommands = (bot) => {
       const history = userInfo.history.filter((entry) => entry.attended);
 
       if (history.length < 2) {
+        logger.warn(`[DATA_ERROR] [leetcodeCommands] Not enough attended contests for id: ${ctx.from.id}`);
         return ctx.reply(
           "Not enough attended contests to generate rating chart."
         );
