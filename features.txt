@@ -11,7 +11,59 @@ Implement if user have only one profile out of given platform
 
 Implement rate limiter
 
-----------------------------------
+Thinking to implement pm2 for advanced monitoring- will help in admin featre
 
+----------------------------------
+Steps-
 // Implement winston logger----priority
-    - Using 
+    - Different logs have different time. -better stack for reference
+    -Separated code files for logger
+    -Replaced chalk with winston logger. 
+
+----LOGS----
+levels-
+    fatal: 0, // for system severiety/crash/failure , like bot crash, db not conecting
+    error: 1, // errors
+    warn: 2, // for potential errors
+    abuse: 3, // abuse to api/bot
+    info: 4, // for debugging purpose
+    debug: 5, // for debugging purpose
+
+format-
+
+type: [Summary] [where] message timestamp
+
+info-
+    command related-
+        [COMMAND]- when a command is triggered
+
+    db related-
+        [CREATION]- successfully created something in DB
+        [UPDATION]- successfully updated something in DB
+        [DELETION] - successfully deleted something from db
+        [CACHE HIT]- found existing data in DB
+        [DB_SUCCESS] - successfully performed  db operation
+
+    others-
+        [RE_SUCCESS]- successfully responded to query
+        [JOB_SUCCESS]- agenda job related success
+
+warn-
+    db related-
+        [ID_NOT_SET]- when id is not set in db
+        [CACHE MISS]- when data is not in db
+        [MISSING] - something missing in DB
+    other-
+        [DATA_ERROR]- data related error
+    job related-
+        [JOB_WARN] - warning related to job
+
+error-
+    [API_ERROR] - api error- occurs when theres an error from fetching from api
+    [JOB_ERROR]- error related to agenda jobs
+    [COMMANDS]- error in commands
+
+fatal-
+    [SYSTEM]- fatal error related to server/system
+    [DB]- fatal error related to db
+    [COMMAND] - fatal error related to commands

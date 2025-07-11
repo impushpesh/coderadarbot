@@ -1,4 +1,4 @@
-import chalk from "chalk";
+import logger from "../../logger/logger.js"
 import User from "../../models/user.model.js";
 import { getCodeforceUserInfo } from "../../services/index.js"; // Adjust this import as needed
 
@@ -8,20 +8,12 @@ const userStates = new Map(); // Map<telegramUserId, { stage: string, data?: obj
 export const setupCommand = (bot) => {
   // /setup command handler
   bot.command("setup", (ctx) => {
-    console.log(
-      chalk.cyan(
-        `[COMMAND] /setup triggered by id: ${ctx.from.id}, username: ${
-          ctx.from.username || "N/A"
-        }`
-      )
-    );
-
+    logger.info(`[COMMAND] [setupCommand] /setup triggered by id: ${ctx.from.id}, username: ${ctx.from.username || "N/A"}`);
+    
     const userId = ctx.from.id;
     userStates.set(userId, { stage: "awaiting_codeforces" });
 
-    console.log(
-      chalk.yellow(`[INFO] Awaiting Codeforces username from user ${userId}`)
-    );
+    logger.debug(`Awaiting Codeforces username from user ${userId}`);
     ctx.reply("1️⃣ Please enter your Codeforces username:");
   });
 
@@ -34,44 +26,30 @@ export const setupCommand = (bot) => {
     const input = ctx.message.text.trim();
 
     if (state.stage === "awaiting_codeforces") {
-      console.log(
-        chalk.cyan(`[INPUT] Codeforces username from ${userId}: ${input}`)
-      );
+      logger.debug(`input Codeforces username from ${userId}: ${input}`)
       const valid = await getCodeforceUserInfo(input);
       if (!valid) {
-        console.log(
-          chalk.red(
-            `[ERROR] Invalid Codeforces username from ${userId}: ${input}`
-          )
-        );
+        logger.debug(`Invalid Codeforces username from ${userId}: ${input}`);
         return ctx.reply("Invalid Codeforces username. Try again.");
       }
 
       state.data = { codeforcesId: input };
       state.stage = "awaiting_codechef";
-      console.log(
-        chalk.green(`[OK] Codeforces username accepted for ${userId}`)
-      );
+      logger.info(`[RE_SUCCESS] [setupCommand] Codeforces username accepted for ${userId}`);
       ctx.reply("2️⃣ Got it! Now enter your CodeChef username:");
     } else if (state.stage === "awaiting_codechef") {
-      console.log(
-        chalk.cyan(`[INPUT] CodeChef username from ${userId}: ${input}`)
-      );
+      logger.debug(`input CodeChef username from ${userId}: ${input}`);
       state.data.codechefId = input;
       state.stage = "awaiting_leetcode";
-      console.log(chalk.green(`[OK] CodeChef username accepted for ${userId}`));
+      logger.info(`[RE_SUCCESS] [setupCommand] CodeChef username accepted for ${userId}`);
       ctx.reply("3️⃣ Great! Now enter your LeetCode username:");
     } else if (state.stage === "awaiting_leetcode") {
-      console.log(
-        chalk.cyan(`[INPUT] LeetCode username from ${userId}: ${input}`)
-      );
+      logger.debug(`input LeetCode username  from ${userId}: ${input}`);
       state.data.leetcodeId = input;
 
       await User.updateOne({ telegramId: userId }, { $set: state.data });
-      console.log(
-        chalk.green(`[SUCCESS] User data saved for ${userId}:`),
-        state.data
-      );
+      logger.info(`[CREATION] [setupCommand] User data created for ${userId}`);
+      logger.debug(state.data)
 
       ctx.reply(
         "<b>Setup complete!</b>🎉🎉\nYour platform handles have been saved.\nYou can now use commands like /status to check your ratings.\nUse /help to see available commands.",

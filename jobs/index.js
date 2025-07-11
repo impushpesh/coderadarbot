@@ -1,5 +1,6 @@
 import { Agenda } from "agenda";
 import dotenv from "dotenv";
+import logger from "../logger/logger.js";
 
 //importing job definitions
 import { defineCodeforceRatingChange } from "./definitions/codeforceRatingChange.js";
@@ -20,7 +21,7 @@ defineCodeforceRatingChange(agenda);
 
 // Configuring agenda
 agenda.on("ready", async () => {
-  console.log("[INFO] Agenda ready; scheduling jobs…");
+  logger.info("[JOB_SUCCESS] [Agenda] Agenda is ready and running");
 
   // await agenda.every(
   //   {

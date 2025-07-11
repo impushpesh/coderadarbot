@@ -1,17 +1,12 @@
-import chalk from "chalk";
+import logger from "../../logger/logger.js"
 import User from "../../models/user.model.js";
 
 export const userCommands = (bot) => {
   // START command
   bot.start(async (ctx) => {
-    console.log(
-      chalk.cyan(
-        `[COMMAND] /start triggered by id:  ${ctx.from.id} and username: ${
-          ctx.from.username || "N/A"
-        }`
-      )
-    );
-    console.dir(ctx.from, { depth: null });
+    logger.info(`[COMMAND] [userCommands] /start triggered by id:  ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
+
+    logger.debug(`User info: ${JSON.stringify(ctx.from, null, 2)}`);
 
     const existingUser = await User.findOne({ telegramId: ctx.from.id });
 
@@ -26,26 +21,9 @@ export const userCommands = (bot) => {
       });
 
       await newUser.save();
-      console.log(
-        chalk.green(
-          `[DB] New user saved: ${newUser.username || newUser.telegramId}`
-        )
-      );
+      logger.info(`[CREATION] [userCommands] New user saved: ${newUser.username || newUser.telegramId}`)
     } else {
-      console.log(
-        chalk.yellow(
-          `[DB] User already exists: ${
-            existingUser.username || existingUser.telegramId
-          }`
-        )
-      );
-      console.log(
-        chalk.gray(
-          `[DB] Data saving denied for ${
-            existingUser.username || existingUser.telegramId
-          }`
-        )
-      );
+      logger.info(`[CACHE HIT] [userCommands] User already exists: ${existingUser.username || existingUser.telegramId}`)
     }
 
     ctx.reply(
@@ -58,13 +36,9 @@ export const userCommands = (bot) => {
 
   // Help command
   bot.help((ctx) => {
-    console.log(
-      chalk.cyan(
-        `[COMMAND] /help triggered by id:  ${ctx.from.id} and username: ${
-          ctx.from.username || "N/A"
-        }`
-      )
-    );
+    logger.info(`[COMMAND] [userCommands] /help triggered by id:  ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
+    logger.debug(`User info: ${JSON.stringify(ctx.from, null, 2)}`);
+
     ctx.reply(
       "<b>The list of available commands:</b>\n" +
         "━━━━━━━━━━━━━━━━━━━━\n" +
@@ -100,18 +74,13 @@ export const userCommands = (bot) => {
   // /info - Get profile info saved on db
   bot.command("info", async (ctx) => {
     try {
-      console.log(
-        chalk.cyan(
-          `[COMMAND] /info triggered by id: ${ctx.from.id} and username: ${
-            ctx.from.username || "N/A"
-          }`
-        )
-      );
+
+      logger.info(`[COMMAND] [userCommands] /info triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`)
 
       const user = await User.findOne({ telegramId: ctx.from.id });
 
       if (!user) {
-        console.log(chalk.yellow("[WARN] User not found in database."));
+        logger.warn(`[CACHE MISS] [userCommands] User data missing`)
         return ctx.reply(
           "No profile found. Please register your handles first.\n Use: /start then /setup"
         );
@@ -151,31 +120,21 @@ export const userCommands = (bot) => {
     `.trim();
 
       await ctx.reply(message, { parse_mode: "HTML" });
-      console.log(
-        chalk.green(
-          `[SUCCESS] /info response sent for Telegram ID: ${ctx.from.id}`
-        )
-      );
+      logger.info(`[RE_SUCCESS] [userCommands] /info response sent for Telegram ID: ${ctx.from.id}`);
     } catch (error) {
-      console.error(chalk.red("[FATAL] Error in /info command:"), error);
-      ctx.reply("Oops! Something went wrong while fetching your profile info.");
+      logger.error(`[COMMAND] [userCommands] Error in /info command:`, error);
+      ctx.reply("Error in info command");
     }
   });
 
   // /delete - Delete your profile from database TODO: Have to configure this command so that there will be a cooling period before deletion of profile
   bot.command("delete", async (ctx) => {
     try {
-      console.log(
-        chalk.cyan(
-          `[COMMAND] /delete triggered by id: ${ctx.from.id} and username: ${
-            ctx.from.username || "N/A"
-          }`
-        )
-      );
+      logger.info(`[COMMAND] [userCommands] /delete triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 
       const user = await User.findOne({ telegramId: ctx.from.id });
       if (!user) {
-        console.log(chalk.yellow("[WARN] User not found in database."));
+        logger.warn(`[CACHE MISS] [userCommands] User data missing`);
         return ctx.reply("No profile found to delete.");
       }
 
@@ -184,14 +143,10 @@ export const userCommands = (bot) => {
       await ctx.reply(
         "Your profile has been deleted successfully.\n Use /start to create a new profile then proceed with /setup to set up your handles again."
       );
-      console.log(
-        chalk.green(`[SUCCESS] Profile deleted for Telegram ID: ${ctx.from.id}`)
-      );
+      logger.info(`[DELETION] [userCommands] Successfully deleted profile for Telegram ID: ${ctx.from.id}`)
     } catch (error) {
-      console.error(chalk.red("[FATAL] Error in /delete command:"), error);
-      ctx.reply("Oops! Something went wrong while deleting your profile.");
+      logger.error(`[COMMAND] [userCommands] Error in /delete command:`, error);
+      ctx.reply("Error in delete command");
     }
   });
-
-  
 };

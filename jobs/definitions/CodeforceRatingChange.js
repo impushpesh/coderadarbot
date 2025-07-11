@@ -1,6 +1,6 @@
 // Codeforce rating change job definition- detects change and update db
 
-import chalk from "chalk";
+import logger from "../../logger/logger.js";
 import { Telegraf } from "telegraf";
 import dotenv from "dotenv";
 
@@ -17,7 +17,7 @@ export function defineCodeforceRatingChange(agenda) {
     // check the current rating of users from db, and the previous rating of the user, if its different, then update the user data
     // and ping that particular user after successful updation
     try {
-      console.log(chalk.blue("[INFO] Starting Codeforces rating change job..."));
+      logger.info("[JOB_SUCCESS] [defineCodeforceRatingChange] Rating change job started for codeforce");
 
       const users = await User.find({}, "telegramId codeforcesId");
 
@@ -25,7 +25,7 @@ export function defineCodeforceRatingChange(agenda) {
         if (!user.codeforcesId) continue;
         const userInfo = await getCodeforceUserInfo(user.codeforcesId);
         if (!userInfo) {
-          console.warn(chalk.yellow(`[WARN] No Codeforces profile found for user: ${user.codeforcesId}`));
+          logger.warn(`[JOB_WARN] [defineCodeforceRatingChange] No Codeforces user info found for user: ${user.telegramId}`);
           continue;
         }
 
@@ -33,7 +33,7 @@ export function defineCodeforceRatingChange(agenda) {
         const userFromDB = await codeforcesProfileModel.findOne({ handle: userInfo.handle });
 
         if (userInfo.rating !== userFromDB.rating) {
-          console.log(chalk.green("[INFO] Codeforces rating has changed."));
+          logger.debug(`Rating changed for user: ${user.telegramId}. Old Rating: ${userFromDB.rating}, New Rating: ${userInfo.rating}`);
           // Update the user's data in the database- rating, max rating, rank, max rank
           userFromDB.rating = userInfo.rating;
           userFromDB.maxRating = userInfo.maxRating;
@@ -43,11 +43,12 @@ export function defineCodeforceRatingChange(agenda) {
 
           // Send a notification to the user
           await bot.telegram.sendMessage(user.telegramId, `Your Codeforces rating has been updated to ${userInfo.rating}.`, { parse_mode: "HTML" });
+          logger.info(`[JOB_SUCCESS] [defineCodeforceRatingChange] Notified user ${user.telegramId} about rating change.`);
         }
       }
-      console.log(chalk.blue("[INFO] Codeforces rating check job finished."));
+      logger.info("[JOB_SUCCESS] [defineCodeforceRatingChange] Codeforces rating check job finished successfully.");
     } catch (error) {
-      console.error(chalk.red("[ERROR] Failed to check Codeforces rating change:"), error);
+      logger.error("[JOB_ERROR] [defineCodeforceRatingChange] Failed to check Codeforces rating change from codeforce rating change job", error);
     } 
   });
 }

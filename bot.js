@@ -1,5 +1,5 @@
 import { Telegraf } from "telegraf";
-import chalk from "chalk";
+import logger from "./logger/logger.js"
 import dotenv from "dotenv";
 import connectDB from "./lib/connection.js";
 import { registerCommands } from "./commands/index.js";
@@ -17,9 +17,9 @@ registerCommands(bot);
 
 // Bot launch
 bot.launch();
-console.log(chalk.green("[INFO] Bot is running..."));
+logger.debug("Bot is running...")
 
 
 bot.catch((err) => {
-  console.error(chalk.red("[FATAL] Error occurred:"), err);
+  logger.fatal("[SYSTEM] [BOT] An error occurred while running bot:", err);
 });
