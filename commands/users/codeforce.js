@@ -165,7 +165,7 @@ export const codeforceCommands = (bot) => {
 
       logger.info(`[RE_SUCCESS] [codeforcesCommands] Codeforces info sent for id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
     } catch (error) {
-      logger.error(`[FATAL] [codeforcesCommands] Error in /codeforces command:`, error);
+      logger.error(`[COMMANDS] [codeforcesCommands] Error in /codeforces command:`, error);
       ctx.reply(
         "Error in codeforce command"
       );
@@ -188,7 +188,6 @@ export const codeforceCommands = (bot) => {
       const ratingHistory = await getCodeforceRatingHistory(user.codeforcesId);
 
       if (!ratingHistory || ratingHistory.length < 2) {
-        logger.warn(`[DATA_ERROR] [codeforcesCommands] Not enough contest data to show rating changes for id: ${ctx.from.id}`);
         return ctx.reply("Not enough contest data to show rating changes.");
       }
 
@@ -227,7 +226,7 @@ export const codeforceCommands = (bot) => {
 
       logger.info(`[RE_SUCCESS] [codeforcesCommands] Codeforces rating info sent for id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
     } catch (error) {
-      logger.error(`[FATAL] [codeforcesCommands] Error in /codeforcesRating command:`, error);
+      logger.error(`[COMMANDS] [codeforcesCommands] Error in /codeforcesRating command:`, error);
       ctx.reply(
         "Error in codeforce rating command"
       );

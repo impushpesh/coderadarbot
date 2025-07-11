@@ -1,5 +1,4 @@
-//log pending
-import chalk from "chalk";
+import logger from "../../logger/logger.js";
 import { format } from "date-fns";
 import User from "../../models/user.model.js";
 
@@ -9,13 +8,7 @@ export const contestCommands = (bot) => {
   // /contest - Get Upcoming contest list
   bot.command("contest", async (ctx) => {
     try {
-      console.log(
-        chalk.cyan(
-          `[COMMAND] /contest triggered by id: ${ctx.from.id} and username: ${
-            ctx.from.username || "N/A"
-          }`
-        )
-      );
+      logger.info(`[COMMAND] [contestCommands] /contest triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 
       const contests = await getUpcomingCodeforcesContests();
 
@@ -37,34 +30,22 @@ export const contestCommands = (bot) => {
 
       await ctx.reply(message.trim(), { parse_mode: "HTML" });
 
-      console.log(
-        chalk.green(
-          `[SUCCESS] Sent upcoming contests for id: ${ctx.from.id} (${
-            ctx.from.username || "N/A"
-          })`
-        )
-      );
+      logger.info(`[RE_SUCCESS] [contestCommands] Contest list sent for Telegram ID: ${ctx.from.id}`);
     } catch (error) {
-      console.error(chalk.red("[FATAL] Error in /contest command:"), error);
-      ctx.reply("Oops! Couldn't fetch contest list from Codeforces.");
+      logger.error(`[COMMANDS] [contestCommands] Error in /contest command:`, error);
+      ctx.reply("Error in contest command. Please try again later.");
     }
   });
 
   // /status - Get your status(Rating) in all platforms
   bot.command("status", async (ctx) => {
     try {
-      console.log(
-        chalk.cyan(
-          `[COMMAND] /status triggered by id:  ${ctx.from.id} and username: ${
-            ctx.from.username || "N/A"
-          }`
-        )
-      );
+      logger.info(`[COMMAND] [contestCommands] /status triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 
       const user = await User.findOne({ telegramId: ctx.from.id });
 
       if (!user) {
-        console.log(chalk.yellow("[WARN] User not found in database."));
+        logger.warn(`[ID_NOT_SET] [contestCommands] User not found in database for id: ${ctx.from.id}`);
         return ctx.reply(
           "No profile found. Please register your handles first:\n Use: /setup"
         );
@@ -98,12 +79,10 @@ export const contestCommands = (bot) => {
       }
 
       await ctx.reply(message.trim(), { parse_mode: "HTML" });
-      console.log(
-        chalk.green(`[SUCCESS] Status sent for Telegram ID: ${ctx.from.id}`)
-      );
+      logger.info(`[RE_SUCCESS] [contestCommands] Status sent for id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
     } catch (error) {
-      console.error(chalk.red("[FATAL] Error in /status command:"), error);
-      ctx.reply("Oops! Something went wrong while fetching your status.");
+      logger.error(`[COMMANDS] [contestCommands] Error in /status command:`, error);
+      ctx.reply("Error in status command. Please try again later.");
     }
   });
 };

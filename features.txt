@@ -13,6 +13,10 @@ Implement rate limiter
 
 Thinking to implement pm2 for advanced monitoring- will help in admin featre
 
+After implementing express, can implement node clusters to serve multiple users- it uses round robbin algo.
+Also can make a separate cluster dedicated only to admin to serve on priority basis.
+
+implement monitor to monitor logs. -- https://betterstack.com/telemetry
 ----------------------------------
 Steps-
 // Implement winston logger----priority
@@ -32,6 +36,9 @@ levels-
 format-
 
 type: [Summary] [where] message timestamp
+for example-
+    [timestamp] warn: [ID_NOT_SET] [codechefCommands] User not found or CodeChef ID not set for id: 15547
+this means theres a warning of [ID_NOT_SET] inside [codechefCommands] with message User not found or CodeChef ID not set for id: 15547
 
 info-
     command related-

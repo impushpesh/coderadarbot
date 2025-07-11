@@ -141,7 +141,7 @@ Country Rank: ${countryRank || "N/A"}
         { url: profile },
         { caption: message, parse_mode: "HTML" }
       );
-      logger.info(`[SUCCESS] [codechefCommands] CodeChef info sent for id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
+      logger.info(`[RE_SUCCESS] [codechefCommands] CodeChef info sent for id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
     } catch (error) {
       logger.error(`[COMMANDS] [codechefCommands] Error in /codechef command:`, error);
       ctx.reply(

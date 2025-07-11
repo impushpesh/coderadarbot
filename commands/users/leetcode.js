@@ -1,5 +1,4 @@
-// log pending
-import chalk from "chalk";
+import logger from "../../logger/logger.js";
 import User from "../../models/user.model.js";
 import UserData from "../../models/userData.model.js";
 import LeetcodeProfileModel from "../../models/leetcodeProfile.model.js";
@@ -15,20 +14,12 @@ export const leetcodeCommands = (bot) => {
   // /leetcode - Get LeetCode user Info
   bot.command("leetcode", async (ctx) => {
     try {
-      console.log(
-        chalk.cyan(
-          `[COMMAND] /leetcode triggered by id:  ${ctx.from.id} and username: ${
-            ctx.from.username || "N/A"
-          }`
-        )
-      );
-
+      logger.info(`[COMMAND] [leetcodeCommands] /leetcode triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
+  
       const user = await User.findOne({ telegramId: ctx.from.id });
 
       if (!user || !user.leetcodeId) {
-        console.log(
-          chalk.yellow("[WARN] User not found or LeetCode ID not set.")
-        );
+        logger.warn(`[ID_NOT_SET] [leetcodeCommands] User not found or LeetCode ID not set for id: ${ctx.from.id}`);
         return ctx.reply(
           "Please set up your LeetCode username using /setup command."
         );
@@ -42,61 +33,44 @@ export const leetcodeCommands = (bot) => {
       if (!userData || !userData.leetcode) {
         // If no profileDoc yet, fetch from API and create one
         if (!profileDoc) {
-          console.log(
-            chalk.blue(
-              "[INFO] No existing LeetCode profile found. Fetching from API..."
-            )
-          );
+          logger.info(`[CACHE MISS] [leetcodeCommands] No existing LeetcodeProfile found for handle: ${lcHandle}. Fetching from API...`);
           const apiData = await getLeetCodePublicProfile(lcHandle);
 
           if (!apiData) {
-            console.log(
-              chalk.red("[ERROR] Failed to fetch LeetCode data from API.")
-            );
+            logger.error(`[API_ERROR] [leetcodeCommands] Failed to fetch LeetCode data from API for handle: ${lcHandle}.`);
             return ctx.reply(
               "Failed to fetch LeetCode user info. Please check your username with /info."
             );
           }
 
           profileDoc = await LeetcodeProfileModel.create(apiData);
-          console.log(chalk.green("[INFO] Created new LeetcodeProfile in DB."));
+          logger.info(`[CREATION] [leetcodeCommands] Created new LeetcodeProfile in DB for handle: ${lcHandle}`);
         } else {
-          console.log(
-            chalk.green("[CACHE HIT] Found existing LeetcodeProfile in DB.")
-          );
+          logger.info(`[CACHE HIT] [leetcodeCommands] Found existing LeetcodeProfile in DB for handle: ${lcHandle}`);
         }
 
         if (userData) {
           userData.leetcode = profileDoc._id;
           await userData.save();
-          console.log(
-            chalk.green("[INFO] Linked existing Leetcode profile to UserData.")
-          );
+          logger.info(`[UPDATION] [leetcodeCommands] Linked existing UserData with new Leetcode profile for user: ${user._id}`);
         } else {
           userData = await UserData.create({
             telegramID: user._id,
             leetcode: profileDoc._id,
           });
-          console.log(
-            chalk.green(
-              "[INFO] Created new UserData and linked Leetcode profile."
-            )
-          );
+          logger.info(`[CREATION] [leetcodeCommands] Created new UserData document for user: ${user._id}`);
         }
       } else {
         // userData exists AND userData.leetcode is already set
         profileDoc = await LeetcodeProfileModel.findById(userData.leetcode);
 
         if (!profileDoc) {
-          console.log(
-            chalk.yellow(
-              "[WARN] userData.leetcode pointed to a missing profile. Re-creating/linking..."
-            )
-          );
+          logger.warn(`[MISSING] [leetcodeCommands] userData.leetcode pointed to a missing profile. Re-creating/linking...`);
 
           const apiData = await getLeetCodePublicProfile(lcHandle);
 
           if (!apiData) {
+            logger.error(`[API_ERROR] [leetcodeCommands] Failed to fetch LeetCode data from API for handle: ${lcHandle}.`);
             return ctx.reply(
               "Failed to re-fetch LeetCode info. Please check your username."
             );
@@ -111,17 +85,9 @@ export const leetcodeCommands = (bot) => {
           userData.leetcode = profileDoc._id;
           await userData.save();
 
-          console.log(
-            chalk.green(
-              "[INFO] Re-linked or re-created missing Leetcode profile."
-            )
-          );
+          logger.info(`[UPDATION] [leetcodeCommands] Re-linked UserData with new Leetcode profile for user: ${user._id}`);
         } else {
-          console.log(
-            chalk.green(
-              "[CACHE HIT] Using saved LeetcodeProfile from UserData."
-            )
-          );
+          logger.info(`[CACHE HIT] [leetcodeCommands] Using saved LeetcodeProfile from UserData.`);
         }
       }
 
@@ -132,7 +98,7 @@ export const leetcodeCommands = (bot) => {
         const oneDayMs  =  24 * 60 * 60 * 1000;
 
         if(now-lastUpdate > oneDayMs){
-          console.log(chalk.yellow("[WARN] Leetcode profile is outdated. Re-fetching..."));
+          logger.info(`[CACHE MISS] [leetcodeCommands] Leetcode profile is outdated (>24 hrs). Fetching fresh data...`);
           const apiData = await getLeetCodePublicProfile(lcHandle);
           if (apiData) {
             profileDoc = await LeetcodeProfileModel.findByIdAndUpdate(
@@ -141,14 +107,14 @@ export const leetcodeCommands = (bot) => {
               { new: true, runValidators: true }
             );
             profileDoc = await LeetcodeProfileModel.findById(profileDoc._id);
-            console.log(chalk.green("[INFO] Leetcode Profile refreshed and saved."));
+            logger.info(`[UPDATION] [leetcodeCommands] LeetcodeProfile refreshed and saved for handle: ${lcHandle}`);
           }else{
-            console.log(chalk.red("[ERROR] Failed to fetch updated LeetCode data from API."));
+            logger.error(`[API_ERROR] [leetcodeCommands] Failed to fetch updated LeetCode data from API for handle: ${lcHandle}.`);
           }
           
           
         }else{
-          console.log(chalk.green("[CACHE HIT] Leetcode profile is fresh (<4 days)."));
+          logger.info(`[CACHE HIT] [leetcodeCommands] Leetcode profile is fresh (<4 days).`);
 
         }
       }
@@ -172,17 +138,11 @@ export const leetcodeCommands = (bot) => {
         { url: avatar },
         { caption: message, parse_mode: "HTML" }
       );
-      console.log(
-        chalk.green(
-          `[SUCCESS] LeetCode user info sent for id:  ${
-            ctx.from.id
-          } and username: ${ctx.from.username || "N/A"}`
-        )
-      );
+      logger.info(`[RE_SUCCESS] [leetcodeCommands] Leetcode info sent for id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
     } catch (error) {
-      console.error(chalk.red("[FATAL] Error in /leetcode command:"), error);
+      logger.error(`[COMMANDS] [leetcodeCommands] Error in /leetcode command: ${error}`);
       ctx.reply(
-        "Oops! Something went wrong while fetching your LeetCode info."
+        "Error in LeetCode command. Please try again later or check your username with /info."
       );
     }
   });
@@ -190,17 +150,11 @@ export const leetcodeCommands = (bot) => {
   // /leetcodeRating - Get LeetCode user rating
   bot.command("leetcodeRating", async (ctx) => {
     try {
-      console.log(
-        chalk.cyan(
-          `[COMMAND] /leetcodeRating triggered by id: ${
-            ctx.from.id
-          } and username: ${ctx.from.username || "N/A"}`
-        )
-      );
+      logger.info(`[COMMAND] [leetcodeCommands] /leetcodeRating triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 
       const user = await User.findOne({ telegramId: ctx.from.id });
       if (!user || !user.leetcodeId) {
-        console.log(chalk.yellow("[WARN] LeetCode ID not found."));
+        logger.warn(`[ID_NOT_SET] [leetcodeCommands] LeetCode ID not found for id: ${ctx.from.id}`);
         return ctx.reply(
           "Please set up your LeetCode username using /setup command."
         );
@@ -249,20 +203,11 @@ export const leetcodeCommands = (bot) => {
         { caption: message, parse_mode: "HTML" }
       );
 
-      console.log(
-        chalk.green(
-          `[SUCCESS] LeetCode rating chart sent for id: ${
-            ctx.from.id
-          } and username: ${ctx.from.username || "N/A"}`
-        )
-      );
+      logger.info(`[RE_SUCCESS] [leetcodeCommands] Leetcode rating info sent for id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
     } catch (error) {
-      console.error(
-        chalk.red("[FATAL] Error in /leetcodeRating command:"),
-        error
-      );
+      logger.error(`[COMMANDS] [leetcodeCommands] Error in /leetcodeRating command:`, error);
       ctx.reply(
-        "Oops! Something went wrong while fetching your LeetCode info."
+        "Error in LeetCode command. Please try again later or check your username with /info."
       );
     }
   });
