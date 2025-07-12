@@ -119,8 +119,9 @@ used docker image of redis-
 implemented bull mq to fetch contest details. before fetching it stores the old contest id, deletes the contest from db, send notification
 to the users (who have enabled notification) about the new contest.
 
-implemented pm2 to automatically start bot in development-
-script- pm2 -dev bot.js
+implemented pm2 to automatically start bot in development- pm2-dev bot.js
+
+script to start the bot- pm2 start bot.js
 
 to view metrics- pm2 list
 to monitor- pm2 monit
