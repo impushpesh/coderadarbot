@@ -12,6 +12,7 @@ import { logCommands } from "./admin/logCommands.js";
 import {dbCommands} from "./admin/dbCommands.js";
 import { jobCommands } from "./admin/jobCommands.js";
 import { userManagementCommands } from "./admin/userManagementCommands.js";
+import { helpCommand } from "./admin/helpCommand.js";
 
 export const registerCommands = (bot) => {
     // User commands
@@ -28,4 +29,5 @@ export const registerCommands = (bot) => {
     dbCommands(bot);
     jobCommands(bot);
     userManagementCommands(bot);
+    helpCommand(bot);
 }

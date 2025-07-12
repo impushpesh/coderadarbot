@@ -30,7 +30,16 @@ export const systemCommands = (bot) => {
     // view the help message for system commands- show all available system commands
     bot.command("systemhelp", isAdmin,async (ctx) => {
         logger.info(`[COMMAND] [systemCommands] /systemhelp triggered by Admin`);
-        await ctx.reply("System commands help is not implemented yet.");
+        await ctx.reply(
+            "<b>The list of available system commands:</b>\n" +
+            "━━━━━━━━━━━━━━━━━━━━\n" +
+            "<b>/botstats</b> - View bot statistics\n" +
+            "<b>/restartbot</b> - Restart the bot\n" +
+            "<b>/uptime</b> - View bot uptime\n" +
+            "<b>/totalusers</b> - View total number of users\n" +
+            "<b>/systemhelp</b> - View this help message\n",
+            { parse_mode: "HTML" }
+        );
     });
 
 

@@ -31,7 +31,16 @@ export const logCommands = (bot) => {
     // log help
     bot.command("loghelp", isAdmin, async (ctx) => {
         logger.info(`[COMMAND] [logCommands] /loghelp triggered by Admin`);
-        await ctx.reply("Help for log commands is not implemented yet.");
+        await ctx.reply(
+            "<b>The list of available Log commands:</b>\n" +
+            "━━━━━━━━━━━━━━━━━━━━\n" +
+            "<b>/viewlog</b> - View recent logs\n" +
+            "<b>/viewerrorlog</b> - View error logs\n" +
+            "<b>/viewfatallog</b> - View fatal logs\n" +
+            "<b>/clearlog</b> - Clear the logs\n" +
+            "<b>/loghelp</b> - View this help message\n",
+            { parse_mode: "HTML" }
+        );
     });
 
     

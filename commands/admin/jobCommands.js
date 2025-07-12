@@ -12,6 +12,12 @@ export const jobCommands = (bot) => {
     // view the help message for job commands
     bot.command("jobhelp", isAdmin, async (ctx) => {
         logger.info(`[COMMAND] [jobCommands] /jobhelp triggered by Admin`);
-        await ctx.reply("Job commands help is not implemented yet.");
+        await ctx.reply(
+            "<b>The list of available Job commands:</b>\n" +
+            "━━━━━━━━━━━━━━━━━━━━\n" +
+            "<b>/jobqueue</b> - View active/pending background jobs\n" +
+            "<b>/jobhelp</b> - View this help message\n",
+            { parse_mode: "HTML" }
+        );
     });
 }

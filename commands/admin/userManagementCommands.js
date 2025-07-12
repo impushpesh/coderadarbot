@@ -32,4 +32,20 @@ export const userManagementCommands = (bot) => {
         logger.info(`[COMMAND] [userManagementCommands] /broadcast triggered by Admin`);
         await ctx.reply("Broadcast message functionality is not implemented yet.");
     });
+
+    // view the help message for user management commands
+    bot.command("userhelp", isAdmin, async (ctx) => {
+        logger.info(`[COMMAND] [userManagementCommands] /userhelp triggered by Admin`);
+        await ctx.reply(
+            "<b>The list of available user management commands:</b>\n" +
+            "━━━━━━━━━━━━━━━━━━━━\n" +
+            "<b>/banuser</b> - Ban a user by user ID\n" +
+            "<b>/unbanuser</b> - Unban a user by user ID\n" +
+            "<b>/listbannedusers</b> - List all banned users\n" +
+            "<b>/userinfo</b> - Fetch user info by user ID\n" +
+            "<b>/broadcast</b> - Broadcast a message to all users\n" +
+            "<b>/userhelp</b> - View this help message\n",
+            { parse_mode: "HTML" }
+        );
+    });
 }
