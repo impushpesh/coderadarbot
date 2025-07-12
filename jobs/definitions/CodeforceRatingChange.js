@@ -23,7 +23,7 @@ export function defineCodeforceRatingChange(agenda) {
 
       for (const user of users) {
         if (!user.codeforcesId) continue;
-        const userInfo = await getCodeforceUserInfo(user.codeforcesId);
+        const userInfo = await getCodeforceUserInfo(user.codeforcesId); // ! Implement timeout to prevent abuse.
         if (!userInfo) {
           logger.warn(`[JOB_WARN] [defineCodeforceRatingChange] No Codeforces user info found for user: ${user.telegramId}`);
           continue;

@@ -1,1 +1,0 @@
-// This job clears the database of all users who have not used the bot for 30 days.

@@ -12,6 +12,7 @@ import { generateLeetCodeChart } from "../../utils/leetcodeChartGenerator.js";
 
 export const leetcodeCommands = (bot) => {
   // /leetcode - Get LeetCode user Info
+  //TODO: Add code to save rating also inside the DB
   bot.command("leetcode", async (ctx) => {
     try {
       logger.info(`[COMMAND] [leetcodeCommands] /leetcode triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
@@ -148,6 +149,7 @@ export const leetcodeCommands = (bot) => {
   });
 
   // /leetcodeRating - Get LeetCode user rating
+  //TODO: Use DB to fetch user ratings instead of API calls
   bot.command("leetcodeRating", async (ctx) => {
     try {
       logger.info(`[COMMAND] [leetcodeCommands] /leetcodeRating triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);

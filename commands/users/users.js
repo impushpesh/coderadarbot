@@ -62,6 +62,7 @@ export const userCommands = (bot) => {
         "• /status- Get your status across all platforms\n" + // Codeforces + Codechef + Leetcode
         "• /info - Get your profile info saved on db\n" + // Get user info from DB
         "• /setup - Set up your profile\n" + // Ask for user id of platforms- Codeforces, Codechef, Leetcode
+        "• /toggleContestAlerts - Toggle contest alerts\n" + // Enable/Disable contest alerts
         "           \n" +
         "━━━━━━━━━━━━━━━━━━━━\n" +
         " ❌ DANGER ZONE: ❌\n" +
@@ -147,6 +148,29 @@ export const userCommands = (bot) => {
     } catch (error) {
       logger.error(`[COMMAND] [userCommands] Error in /delete command:`, error);
       ctx.reply("Error in delete command");
+    }
+  });
+
+  // /toggleContestAlerts - Toggle contest alerts
+  bot.command("toggleContestAlerts", async (ctx) => {
+    try {
+      logger.info(`[COMMAND] [userCommands] /toggleContestAlerts triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
+
+      const user = await User.findOne({ telegramId: ctx.from.id });
+      if (!user) {
+        logger.warn(`[CACHE MISS] [userCommands] User data missing`);
+        return ctx.reply("No profile found. Please register your handles first.\n Use: /start then /setup");
+      }
+
+      user.contestAlertsEnabled = !user.contestAlertsEnabled;
+      await user.save();
+
+      const status = user.contestAlertsEnabled ? "enabled" : "disabled";
+      await ctx.reply(`Contest alerts have been ${status}.`);
+      logger.info(`[TOGGLE] [userCommands] Contest alerts ${status} for Telegram ID: ${ctx.from.id}`);
+    } catch (error) {
+      logger.error(`[COMMAND] [userCommands] Error in /toggleContestAlerts command:`, error);
+      ctx.reply("Error toggling contest alerts");
     }
   });
 };

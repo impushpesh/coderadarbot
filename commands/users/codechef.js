@@ -151,6 +151,7 @@ Country Rank: ${countryRank || "N/A"}
   });
 
   // /codechefRating - Get CodeChef user rating
+  //TODO: Use DB to fetch user ratings instead of API calls
   bot.command("codechefRating", async (ctx) => {
     try {
       logger.info(`[COMMAND] [codechefCommands] /codechefRating triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);

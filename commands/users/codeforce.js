@@ -173,6 +173,7 @@ export const codeforceCommands = (bot) => {
   });
 
   // /codeforce-rating - Get Codeforces user rating
+  //TODO: Change name to generategraph and implement limit on how many times the user can call this command
   bot.command("codeforceRating", async (ctx) => {
     try {
       logger.info(`[COMMAND] [codeforcesCommands] /codeforcesRating triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);

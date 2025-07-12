@@ -1,6 +1,7 @@
 import logger from "../../logger/logger.js";
 import { format } from "date-fns";
 import User from "../../models/user.model.js";
+import UpcomingContest from "../../models/upcomingContest.model.js";
 
 import {getUpcomingCodeforcesContests, getCodeforceRatingHistory, getCodeChefUserInfo, getLeetCodeRatingInfo} from "../../services/index.js"
 
@@ -10,7 +11,7 @@ export const contestCommands = (bot) => {
     try {
       logger.info(`[COMMAND] [contestCommands] /contest triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 
-      const contests = await getUpcomingCodeforcesContests();
+      const contests = await  UpcomingContest.find({ platform: "codeforces" }).sort({ startTime: 1 }).limit(3);
 
       if (!contests || contests.length === 0) {
         return ctx.reply("No upcoming contests found.");
@@ -38,6 +39,7 @@ export const contestCommands = (bot) => {
   });
 
   // /status - Get your status(Rating) in all platforms
+  //TODO: Use DB to fetch user ratings instead of API calls
   bot.command("status", async (ctx) => {
     try {
       logger.info(`[COMMAND] [contestCommands] /status triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);

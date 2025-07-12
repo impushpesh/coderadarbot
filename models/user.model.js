@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    contestAlertsEnabled: {
+      type: Boolean,
+      default: true
+    }
   },
   {
     timestamps: true,

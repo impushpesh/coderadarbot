@@ -4,8 +4,6 @@ import dotenv from "dotenv";
 import connectDB from "./lib/connection.js";
 import { registerCommands } from "./commands/index.js";
 
-// Import agenda
-import agenda from "./jobs/index.js";
 
 dotenv.config();
 
