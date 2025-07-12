@@ -175,9 +175,9 @@ export const codeforceCommands = (bot) => {
 
   // /codeforce-rating - Get Codeforces user rating
   //TODO: Change name to generategraph and implement limit on how many times the user can call this command
-  bot.command("codeforceRating", isBanned, async (ctx) => {
+  bot.command("codeforceratinggraph", isBanned, async (ctx) => {
     try {
-      logger.info(`[COMMAND] [codeforcesCommands] /codeforcesRating triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
+      logger.info(`[COMMAND] [codeforcesCommands] /codeforceratinggraph triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 
       const user = await User.findOne({ telegramId: ctx.from.id });
       if (!user || !user.codeforcesId) {
@@ -228,7 +228,7 @@ export const codeforceCommands = (bot) => {
 
       logger.info(`[RE_SUCCESS] [codeforcesCommands] Codeforces rating info sent for id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
     } catch (error) {
-      logger.error(`[COMMANDS] [codeforcesCommands] Error in /codeforcesRating command:`, error);
+      logger.error(`[COMMANDS] [codeforcesCommands] Error in /codeforceratinggraph command:`, error);
       ctx.reply(
         "Error in codeforce rating command"
       );

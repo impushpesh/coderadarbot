@@ -48,17 +48,17 @@ export const userCommands = (bot) => {
         "━━━━━━━━━━━━━━━━━━━━\n" +
         "<b>CodeForce</b>\n" +
         "• /codeforce - Get Codeforces user info\n" +
-        "• /codeforceRating - Get Codeforces user rating\n" +
+        "• /codeforceratinggraph - Get Codeforces user rating\n" +
         "           \n" +
         "━━━━━━━━━━━━━━━━━━━━\n" +
         "<b>CodeChef</b>\n" +
         "• /codechef - Get CodeChef user info\n" +
-        "• /codechefRating - Get CodeChef user rating\n" +
+        "• /codechefrating - Get CodeChef user rating\n" +
         "           \n" +
         "━━━━━━━━━━━━━━━━━━━━\n" +
         "<b>Leetcode</b>\n" +
         "• /leetcode - Get LeetCode user Info\n" +
-        "• /leetcodeRating - Get LeetCode user rating\n" +
+        "• /leetcoderatinggraph - Get LeetCode user rating\n" +
         "           \n" +
         "━━━━━━━━━━━━━━━━━━━━\n" +
         "<b>Others</b>\n" +
@@ -66,7 +66,7 @@ export const userCommands = (bot) => {
         "• /status- Get your status across all platforms\n" + // Codeforces + Codechef + Leetcode
         "• /info - Get your profile info saved on db\n" + // Get user info from DB
         "• /setup - Set up your profile\n" + // Ask for user id of platforms- Codeforces, Codechef, Leetcode
-        "• /toggleContestAlerts - Toggle contest alerts\n" + // Enable/Disable contest alerts
+        "• /togglecontestalerts - Toggle contest alerts\n" + // Enable/Disable contest alerts
         "           \n" +
         "━━━━━━━━━━━━━━━━━━━━\n" +
         " ❌ DANGER ZONE: ❌\n" +
@@ -156,9 +156,9 @@ export const userCommands = (bot) => {
   });
 
   // /toggleContestAlerts - Toggle contest alerts
-  bot.command("toggleContestAlerts", isBanned, async (ctx) => {
+  bot.command("togglecontestalerts", isBanned, async (ctx) => {
     try {
-      logger.info(`[COMMAND] [userCommands] /toggleContestAlerts triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
+      logger.info(`[COMMAND] [userCommands] /togglecontestalerts triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 
       const user = await User.findOne({ telegramId: ctx.from.id });
       if (!user) {
@@ -173,7 +173,7 @@ export const userCommands = (bot) => {
       await ctx.reply(`Contest alerts have been ${status}.`);
       logger.info(`[TOGGLE] [userCommands] Contest alerts ${status} for Telegram ID: ${ctx.from.id}`);
     } catch (error) {
-      logger.error(`[COMMAND] [userCommands] Error in /toggleContestAlerts command:`, error);
+      logger.error(`[COMMAND] [userCommands] Error in /togglecontestalerts command:`, error);
       ctx.reply("Error toggling contest alerts");
     }
   });

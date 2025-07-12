@@ -154,9 +154,9 @@ Country Rank: ${countryRank || "N/A"}
 
   // /codechefRating - Get CodeChef user rating
   //TODO: Use DB to fetch user ratings instead of API calls
-  bot.command("codechefRating",isBanned, async (ctx) => {
+  bot.command("codechefrating",isBanned, async (ctx) => {
     try {
-      logger.info(`[COMMAND] [codechefCommands] /codechefRating triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
+      logger.info(`[COMMAND] [codechefCommands] /codechefrating triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 
       const user = await User.findOne({ telegramId: ctx.from.id });
       if (!user || !user.codechefId) {
@@ -189,7 +189,7 @@ Country Rank: ${countryRank || "N/A"}
       await ctx.reply(message, { parse_mode: "HTML" });
       logger.info(`[RE_SUCCESS] [codechefCommands] CodeChef rating info sent for id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
     } catch (error) {
-      logger.error(`[COMMANDS] [codechefCommands] Error in /codechefRating command:`, error);
+      logger.error(`[COMMANDS] [codechefCommands] Error in /codechefrating command:`, error);
       ctx.reply(
         "command not responding. Please try again later or check your CodeChef username with /info command."
       );

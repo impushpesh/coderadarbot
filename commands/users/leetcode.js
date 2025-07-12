@@ -151,9 +151,9 @@ export const leetcodeCommands = (bot) => {
 
   // /leetcodeRating - Get LeetCode user rating
   //TODO: Use DB to fetch user ratings instead of API calls
-  bot.command("leetcodeRating", isBanned, async (ctx) => {
+  bot.command("leetcoderatinggraph", isBanned, async (ctx) => {
     try {
-      logger.info(`[COMMAND] [leetcodeCommands] /leetcodeRating triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
+      logger.info(`[COMMAND] [leetcodeCommands] /leetcoderatinggraph triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 
       const user = await User.findOne({ telegramId: ctx.from.id });
       if (!user || !user.leetcodeId) {
@@ -210,7 +210,7 @@ export const leetcodeCommands = (bot) => {
 
       logger.info(`[RE_SUCCESS] [leetcodeCommands] Leetcode rating info sent for id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
     } catch (error) {
-      logger.error(`[COMMANDS] [leetcodeCommands] Error in /leetcodeRating command:`, error);
+      logger.error(`[COMMANDS] [leetcodeCommands] Error in /leetcoderatinggraph command:`, error);
       ctx.reply(
         "Error in LeetCode command. Please try again later or check your username with /info."
       );
