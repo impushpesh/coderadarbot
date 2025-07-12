@@ -5,6 +5,7 @@ import { getCodeforceUserInfo } from "../../services/index.js"; // Adjust this i
 // Store user setup progress
 const userStates = new Map(); // Map<telegramUserId, { stage: string, data?: object }>
 
+//!NOTE: isBanned is not implemented here
 export const setupCommand = (bot) => {
   // /setup command handler
   bot.command("setup", (ctx) => {

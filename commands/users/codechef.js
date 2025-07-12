@@ -5,9 +5,11 @@ import CodechefProfileModel from "../../models/codechefProfile.model.js";
 import { getCodeChefUserInfo } from "../../services/index.js";
 import UserData from "../../models/userData.model.js";
 
+import { isBanned } from "../../middleware/isBanned.js";
+
 export const codechefCommands = (bot) => {
   // /codechef - Get CodeChef user info
-  bot.command("codechef", async (ctx) => {
+  bot.command("codechef", isBanned, async (ctx) => {
     try {
       logger.info(`[COMMAND] [codechefCommands] /codechef triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
     
@@ -152,7 +154,7 @@ Country Rank: ${countryRank || "N/A"}
 
   // /codechefRating - Get CodeChef user rating
   //TODO: Use DB to fetch user ratings instead of API calls
-  bot.command("codechefRating", async (ctx) => {
+  bot.command("codechefRating",isBanned, async (ctx) => {
     try {
       logger.info(`[COMMAND] [codechefCommands] /codechefRating triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 

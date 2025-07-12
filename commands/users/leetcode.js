@@ -9,11 +9,12 @@ import {
 } from "../../services/index.js";
 
 import { generateLeetCodeChart } from "../../utils/leetcodeChartGenerator.js";
+import { isBanned } from "../../middleware/isBanned.js";
 
 export const leetcodeCommands = (bot) => {
   // /leetcode - Get LeetCode user Info
   //TODO: Add code to save rating also inside the DB
-  bot.command("leetcode", async (ctx) => {
+  bot.command("leetcode", isBanned, async (ctx) => {
     try {
       logger.info(`[COMMAND] [leetcodeCommands] /leetcode triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
   
@@ -150,7 +151,7 @@ export const leetcodeCommands = (bot) => {
 
   // /leetcodeRating - Get LeetCode user rating
   //TODO: Use DB to fetch user ratings instead of API calls
-  bot.command("leetcodeRating", async (ctx) => {
+  bot.command("leetcodeRating", isBanned, async (ctx) => {
     try {
       logger.info(`[COMMAND] [leetcodeCommands] /leetcodeRating triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 

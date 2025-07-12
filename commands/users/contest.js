@@ -4,10 +4,11 @@ import User from "../../models/user.model.js";
 import UpcomingContest from "../../models/upcomingContest.model.js";
 
 import {getUpcomingCodeforcesContests, getCodeforceRatingHistory, getCodeChefUserInfo, getLeetCodeRatingInfo} from "../../services/index.js"
+import { isBanned } from "../../middleware/isBanned.js";
 
 export const contestCommands = (bot) => {
   // /contest - Get Upcoming contest list
-  bot.command("contest", async (ctx) => {
+  bot.command("contest", isBanned, async (ctx) => {
     try {
       logger.info(`[COMMAND] [contestCommands] /contest triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 
@@ -40,7 +41,7 @@ export const contestCommands = (bot) => {
 
   // /status - Get your status(Rating) in all platforms
   //TODO: Use DB to fetch user ratings instead of API calls
-  bot.command("status", async (ctx) => {
+  bot.command("status", isBanned, async (ctx) => {
     try {
       logger.info(`[COMMAND] [contestCommands] /status triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 

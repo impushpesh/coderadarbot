@@ -9,10 +9,11 @@ import {
 } from "../../services/index.js";
 
 import { generateRatingChartCodeforces } from "../../utils/codeforcechartGenerator.js";
+import { isBanned } from "../../middleware/isBanned.js";
 
 export const codeforceCommands = (bot) => {
   // /codeforce - Get Codeforces user info
-  bot.command("codeforce", async (ctx) => {
+  bot.command("codeforce", isBanned, async (ctx) => {
     try {
       logger.info(
         `[COMMAND] [codeforceCommands] /codeforce triggered by id: ${
@@ -174,7 +175,7 @@ export const codeforceCommands = (bot) => {
 
   // /codeforce-rating - Get Codeforces user rating
   //TODO: Change name to generategraph and implement limit on how many times the user can call this command
-  bot.command("codeforceRating", async (ctx) => {
+  bot.command("codeforceRating", isBanned, async (ctx) => {
     try {
       logger.info(`[COMMAND] [codeforcesCommands] /codeforcesRating triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 

@@ -100,6 +100,7 @@ warn-
         [DATA_ERROR]- data related error
     job related-
         [JOB_WARN] - warning related to job
+        [MIDDLEWARE] - unauthorized user tried to access admin command
 
 error-
     [API_ERROR] - api error- occurs when theres an error from fetching from api
@@ -133,5 +134,5 @@ to list the processes- pm2 list
 pm2 resource- https://betterstack.com/community/guides/scaling-nodejs/pm2-guide/
               https://www.youtube.com/watch?v=fMtiHOIt0u8&t=1062s
 
-
-                
+message for banned users-
+you have been banned from using the bot contact admin.

@@ -1,8 +1,11 @@
 import logger from "../../logger/logger.js"
 import User from "../../models/user.model.js";
 
+import { isBanned } from "../../middleware/isBanned.js";
+
 export const userCommands = (bot) => {
   // START command
+  //!NOTE: isBanned is not implemented here
   bot.start(async (ctx) => {
     logger.info(`[COMMAND] [userCommands] /start triggered by id:  ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 
@@ -35,6 +38,7 @@ export const userCommands = (bot) => {
   });
 
   // Help command
+  //!NOTE: isBanned is not implemented here
   bot.help((ctx) => {
     logger.info(`[COMMAND] [userCommands] /help triggered by id:  ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
     logger.debug(`User info: ${JSON.stringify(ctx.from, null, 2)}`);
@@ -73,7 +77,7 @@ export const userCommands = (bot) => {
   });
 
   // /info - Get profile info saved on db
-  bot.command("info", async (ctx) => {
+  bot.command("info", isBanned, async (ctx) => {
     try {
 
       logger.info(`[COMMAND] [userCommands] /info triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`)
@@ -129,7 +133,7 @@ export const userCommands = (bot) => {
   });
 
   // /delete - Delete your profile from database TODO: Have to configure this command so that there will be a cooling period before deletion of profile
-  bot.command("delete", async (ctx) => {
+  bot.command("delete", isBanned, async (ctx) => {
     try {
       logger.info(`[COMMAND] [userCommands] /delete triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 
@@ -152,7 +156,7 @@ export const userCommands = (bot) => {
   });
 
   // /toggleContestAlerts - Toggle contest alerts
-  bot.command("toggleContestAlerts", async (ctx) => {
+  bot.command("toggleContestAlerts", isBanned, async (ctx) => {
     try {
       logger.info(`[COMMAND] [userCommands] /toggleContestAlerts triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
 

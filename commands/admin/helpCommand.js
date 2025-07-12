@@ -4,8 +4,8 @@ import { isAdmin } from "../../middleware/isAdmin.js";
 
 export const helpCommand = (bot) => {
     // view the help message for help commands
-    bot.command("helpAdmin", isAdmin, async (ctx) => {
-        logger.info(`[COMMAND] [helpCommand] /help triggered by Admin`);
+    bot.command("helpadmin", isAdmin, async (ctx) => {
+        logger.info(`[COMMAND] [helpCommand] /helpadmin triggered by Admin`);
         await ctx.reply(
             "<b>The list of available commands:</b>\n" +
             "━━━━━━━━━━━━━━━━━━━━\n" +
@@ -20,14 +20,14 @@ export const helpCommand = (bot) => {
             "\n<b>User management Commands</b>\n" +
             "• /userhelp - View user management commands help\n"+
             "\n<b>Admin Commands</b>\n" +
-            "• /viewAllAdminCommands - View all admin commands\n",
+            "• /viewalladmincommands - View all admin commands\n",
             { parse_mode: "HTML" }
         );
     });
 
     // view all available admin commands
-    bot.command("viewAllAdminCommands", isAdmin, async (ctx) => {
-        logger.info(`[COMMAND] [helpCommand] /viewAllAdminCommands triggered by Admin`);
+    bot.command("viewadmincommands", isAdmin, async (ctx) => {
+        logger.info(`[COMMAND] [helpCommand] /viewadmincommands triggered by Admin`);
         await ctx.reply(
             "<b>The list of available admin commands:</b>\n" +
             "━━━━━━━━━━━━━━━━━━━━\n" +

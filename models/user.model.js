@@ -9,6 +9,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    isBanned: {
+      type: Boolean,
+      default: false,
+    },
     isBot: Boolean,
     firstName: String,
     lastName: String,
