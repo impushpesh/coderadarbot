@@ -1,3 +1,4 @@
+// Worker to fetch upcoming contests from Codeforces and notify users
 import { Worker } from "bullmq";
 import dotenv from "dotenv";
 import logger from "../../logger/logger.js";

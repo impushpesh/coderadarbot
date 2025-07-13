@@ -3,7 +3,10 @@ import { format } from "date-fns";
 import User from "../../models/user.model.js";
 import UpcomingContest from "../../models/upcomingContest.model.js";
 
-import {getUpcomingCodeforcesContests, getCodeforceRatingHistory, getCodeChefUserInfo, getLeetCodeRatingInfo} from "../../services/index.js"
+import codeforcesProfileModel from "../../models/codeforceProfile.model.js";
+import LeetcodeProfileModel from "../../models/leetcodeProfile.model.js";
+import codechefProfileModel from "../../models/codechefProfile.model.js";
+
 import { isBanned } from "../../middleware/isBanned.js";
 
 export const contestCommands = (bot) => {
@@ -40,7 +43,6 @@ export const contestCommands = (bot) => {
   });
 
   // /status - Get your status(Rating) in all platforms
-  //TODO: Use DB to fetch user ratings instead of API calls
   bot.command("status", isBanned, async (ctx) => {
     try {
       logger.info(`[COMMAND] [contestCommands] /status triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
@@ -54,30 +56,39 @@ export const contestCommands = (bot) => {
         );
       }
 
-      const { codeforcesId, leetcodeId } = user;
+      const { codeforcesId, leetcodeId, codechefId } = user;
 
-      if (!codeforcesId && !leetcodeId) {
+      if (!codeforcesId && !leetcodeId && !codechefId) {
         return ctx.reply("You have not set up any platform handles yet.\n Use: /setup");
       }
 
       let message = "<b>Your current ratings:</b>\n";
 
       if (codeforcesId) {
-        const cfRating = await getCodeforceRatingHistory(codeforcesId);
-        if (cfRating && cfRating.length > 0) {
-          const latest = cfRating[cfRating.length - 1];
-          message += `<b>Codeforces:</b> ${latest.newRating}\n`;
+        const cfRating = await codeforcesProfileModel.findOne({ handle: codeforcesId });
+        if (cfRating) {
+          const latest = cfRating.rating;
+          message += `<b>Codeforces:</b> ${latest}\n`;
         } else {
           message += "<b>Codeforces:</b> Not available\n";
         }
       }
 
       if (leetcodeId) {
-        const lcRating = await getLeetCodeRatingInfo(leetcodeId);
+        const lcRating = await LeetcodeProfileModel.findOne({ username: leetcodeId });
         if (lcRating) {
           message += `<b>LeetCode:</b> ${lcRating.rating}\n`;
         } else {
           message += "<b>LeetCode:</b> Not available\n";
+        }
+      }
+
+      if (codechefId) {
+        const ccRating = await codechefProfileModel.findOne({ handle: codechefId });
+        if (ccRating) {
+          message += `<b>CodeChef:</b> ${ccRating.currentRating}\n`;
+        } else {
+          message += "<b>CodeChef:</b> Not available\n";
         }
       }
 

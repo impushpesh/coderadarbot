@@ -1,14 +1,14 @@
 ToDO-
 --------------------------------------------------------------------------
 1.  contest.js, fetcher.js, contestDeleter.js, upcomingContest.model.js---- 
-2.  To implement- 
-        - Fetch contest details and save it to DB and return response to user from the DB itself
-        - Implement fetcher job that fetches the contest details
-        - Implement contestDeleter that automatically deletes old contests from db.
+2. [DONE]                           To implement- 
+                                - Fetch contest details and save it to DB and return response to user from the DB itself
+                                - Implement fetcher job that fetches the contest details
+                                - Implement contestDeleter that automatically deletes old contests from db.
 
-3.  Implement leetcode job
+3.  [DONE]           Implement leetcode job
 
-4.  Implement if user have only one profile out of given platform
+4.  [DONE]            Implement if user have only one profile out of given platform
 
 5.  Implement rate limiter
 
@@ -117,8 +117,8 @@ fatal-
 used docker image of redis-
     command- docker run -itd -p 6379:6379
 
-implemented bull mq to fetch contest details. before fetching it stores the old contest id, deletes the contest from db, send notification
-to the users (who have enabled notification) about the new contest.
+[DONE]                    implemented bull mq to fetch contest details. before fetching it stores the old contest id, deletes the contest from db, send notification
+                          to the users (who have enabled notification) about the new contest.
 
 implemented pm2 to automatically start bot in development- pm2-dev bot.js
 

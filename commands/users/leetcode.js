@@ -44,6 +44,10 @@ export const leetcodeCommands = (bot) => {
               "Failed to fetch LeetCode user info. Please check your username with /info."
             );
           }
+          const ratingInfo = await getLeetCodeRatingInfo(lcHandle);
+          const history = ratingInfo.history.filter((entry) => entry.attended);
+          const latest = history[history.length - 1];
+          apiData.rating = latest ? latest.rating : null; // Add rating to the profile data
 
           profileDoc = await LeetcodeProfileModel.create(apiData);
           logger.info(`[CREATION] [leetcodeCommands] Created new LeetcodeProfile in DB for handle: ${lcHandle}`);
@@ -78,6 +82,11 @@ export const leetcodeCommands = (bot) => {
             );
           }
 
+          const ratingInfo = await getLeetCodeRatingInfo(lcHandle);
+          const history = ratingInfo.history.filter((entry) => entry.attended);
+          const latest = history[history.length - 1];
+          apiData.rating = latest ? latest.rating : null; // Add rating to the profile data
+
           profileDoc = await LeetcodeProfileModel.findOneAndUpdate(
             { username: lcHandle },
             apiData,
@@ -102,6 +111,10 @@ export const leetcodeCommands = (bot) => {
         if(now-lastUpdate > oneDayMs){
           logger.info(`[CACHE MISS] [leetcodeCommands] Leetcode profile is outdated (>24 hrs). Fetching fresh data...`);
           const apiData = await getLeetCodePublicProfile(lcHandle);
+          const ratingInfo = await getLeetCodeRatingInfo(lcHandle);
+          const history = ratingInfo.history.filter((entry) => entry.attended);
+          const latest = history[history.length - 1];
+          apiData.rating = latest ? latest.rating : null; // Add rating to the profile data
           if (apiData) {
             profileDoc = await LeetcodeProfileModel.findByIdAndUpdate(
               profileDoc._id,
@@ -121,11 +134,12 @@ export const leetcodeCommands = (bot) => {
         }
       }
 
-      const { badge, avatar, ranking, country, linkedin, github, twitter } =
+      const { badge, avatar, rating, ranking, country, linkedin, github, twitter } =
         profileDoc;
 
       const message = `
     <b>LeetCode ID:</b> ${user.leetcodeId}
+    <b>Rating:</b> ${rating || "N/A"}
     <b>Ranking:</b> ${ranking || "N/A"}
     <b>Country:</b> ${country || "N/A"}
     <b>Badge:</b> ${badge || "N/A"}
@@ -150,7 +164,6 @@ export const leetcodeCommands = (bot) => {
   });
 
   // /leetcodeRating - Get LeetCode user rating
-  //TODO: Use DB to fetch user ratings instead of API calls
   bot.command("leetcoderatinggraph", isBanned, async (ctx) => {
     try {
       logger.info(`[COMMAND] [leetcodeCommands] /leetcoderatinggraph triggered by id: ${ctx.from.id} and username: ${ctx.from.username || "N/A"}`);
