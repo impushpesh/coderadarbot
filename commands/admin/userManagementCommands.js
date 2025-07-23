@@ -224,7 +224,7 @@ export const userManagementCommands = (bot) => {
   });
 
   // broadcast a message to all users
-  //TODO: This will be a worker
+  //TODO: Implementation pending
   bot.command("broadcast", isAdmin, async (ctx) => {
     logger.info(
       `[COMMAND] [userManagementCommands] /broadcast triggered by Admin`

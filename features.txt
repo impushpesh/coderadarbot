@@ -1,20 +1,8 @@
 ToDO-
 --------------------------------------------------------------------------
-1.  contest.js, fetcher.js, contestDeleter.js, upcomingContest.model.js---- 
-2. [DONE]                           To implement- 
-                                - Fetch contest details and save it to DB and return response to user from the DB itself
-                                - Implement fetcher job that fetches the contest details
-                                - Implement contestDeleter that automatically deletes old contests from db.
+>    Implement rate limiter
 
-3.  [DONE]           Implement leetcode job
-
-4.  [DONE]            Implement if user have only one profile out of given platform
-
-5.  Implement rate limiter
-
-6. Thinking to implement pm2 for advanced monitoring- will help in admin featre
-
-7.  After implementing express, can implement node clusters to serve multiple users- it uses round robbin algo.
+>    After implementing express, can implement node clusters to serve multiple users- it uses round robbin algo.
     Also can make a separate cluster dedicated only to admin to serve on priority basis.
     NOTE- Only implement after implementing webhook
                 IMPLEMENTING CLUSTER AND PM2------WITH EXPRESS SERVER
@@ -22,119 +10,127 @@ ToDO-
                           https://www.youtube.com/watch?v=JoPZ9gEvpz8
     Will use round robbin so that response time of the bot can be increased.
 
-8.  [DONE]                               implement monitor to monitor logs. -- https://betterstack.com/telemetry
 
-9.  To implement express route for admin only so that we dont have to touch the commands- this is the logic we will follow
-                                [Express Route]
-                                |
-                                | (has Telegram ID of admin)
-                                ↓
-                                [Create fake ctx with from.id and reply()]
-                                ↓
-                                [Call existing bot command logic]
-                                ↓
-                                [Command runs and sends reply via res.json()]
+>   [last stage] custom remider for users
 
-10. First admin have to send an `/adminLogin` command then if the telegram id will match with the provided admin id in .env, then only it will prompt
-    for password. If password is correct then->create a short session->then enable admin commands.
-    (make a separate db for admin id+password)---also use jwt+bcrypt password......last step after implementing everything.
+>   ML
 
-11. [last stage] custom remider for users
-
-12. ML
-
-13. Dual MongoDB setup: Primary for reads/writes, Secondary as fallback during downtime.
+>   Dual MongoDB setup: Primary for reads/writes, Secondary as fallback during downtime.
     Automatic DB failover: If primary connection fails, switch to secondary and alert admin.
     Scheduled sync: Every 2 days, backup from primary is restored to secondary using mongodump/mongorestore.
 
-14. Implement bullmq for heavy tasks- for example chart generation, sending message to all users, fetching contest details. use agenda to trigger the cron
+>    implemented pm2 to automatically start bot in development- pm2-dev bot.js
+
 -----------------------------------------------------------------------------------------------------------------------
-                    IMPLEMENTING LOGGER
-Steps-
-// Implement winston logger----priority
-    - Different logs have different time. -better stack for reference
-    -Separated code files for logger
-    -Replaced chalk with winston logger. 
+Implement-
+
+    Admin commands
+
+    Rate limiter
+
+    system abuser detecter- who constantly sends message despite rate limit warning
+    autoban exploiters- 
+    Steps-
+        Req->rate limit exceeded->flagged as abuser-> banned
+    
+    Clustering
+
+    quickchart.io
+
+
+
 
 ----LOGS----
-levels-
-    fatal: 0, // for system severiety/crash/failure , like bot crash, db not conecting
-    error: 1, // errors
-    warn: 2, // for potential errors
-    abuse: 3, // abuse to api/bot
-    info: 4, // for debugging purpose
-    debug: 5, // for debugging purpose
+    levels-
+        fatal: 0, // for system severiety/crash/failure , like bot crash, db not conecting
+        error: 1, // errors
+        warn: 2, // for potential errors
+        abuse: 3, // abuse to api/bot
+        info: 4, // for debugging purpose
+        debug: 5, // for debugging purpose
 
-format-
+    format-
 
-type: [Summary] [where] message timestamp
-for example-
-    [timestamp] warn: [ID_NOT_SET] [codechefCommands] User not found or CodeChef ID not set for id: 15547
-this means theres a warning of [ID_NOT_SET] inside [codechefCommands] with message User not found or CodeChef ID not set for id: 15547
+    type: [Summary] [where] message timestamp
+    for example-
+        [timestamp] warn: [ID_NOT_SET] [codechefCommands] User not found or CodeChef ID not set for id: 15547
+    this means theres a warning of [ID_NOT_SET] inside [codechefCommands] with message User not found or CodeChef ID not set for id: 15547
 
-info-
-    command related-
-        [COMMAND]- when a command is triggered
+    info-
+        command related-
+            [COMMAND]- when a command is triggered
 
-    db related-
-        [CREATION]- successfully created something in DB
-        [UPDATION]- successfully updated something in DB
-        [DELETION] - successfully deleted something from db
-        [CACHE HIT]- found existing data in DB
-        [DB_SUCCESS] - successfully performed  db operation
+        db related-
+            [CREATION]- successfully created something in DB
+            [UPDATION]- successfully updated something in DB
+            [DELETION] - successfully deleted something from db
+            [CACHE HIT]- found existing data in DB
+            [DB_SUCCESS] - successfully performed  db operation
 
-    others-
-        [RE_SUCCESS]- successfully responded to query
-        [JOB_SUCCESS]- agenda job related success
-    bullmq-
-        [PRODUCER]- 
-        [WORKER]-
-        [NOTIFY]
-    [SYSTEM]
-    [WEBHOOK]
+        others-
+            [RE_SUCCESS]- successfully responded to query
+            [JOB_SUCCESS]- agenda job related success
+        bullmq-
+            [PRODUCER]- 
+            [WORKER]-
+            [NOTIFY]
+        [SYSTEM]
+        [WEBHOOK]
 
-warn-
-    db related-
-        [ID_NOT_SET]- when id is not set in db
-        [CACHE MISS]- when data is not in db
-        [MISSING] - something missing in DB
-    other-
-        [DATA_ERROR]- data related error
-    job related-
-        [JOB_WARN] - warning related to job
-        [MIDDLEWARE] - unauthorized user tried to access admin command
+    warn-
+        db related-
+            [ID_NOT_SET]- when id is not set in db
+            [CACHE MISS]- when data is not in db
+            [MISSING] - something missing in DB
+        other-
+            [DATA_ERROR]- data related error
+        job related-
+            [JOB_WARN] - warning related to job
+            [MIDDLEWARE] - unauthorized user tried to access admin command
 
-error-
-    [API_ERROR] - api error- occurs when theres an error from fetching from api
-    [JOB_ERROR]- error related to agenda jobs
-    [COMMANDS]- error in commands
-    [Worker]
+    error-
+        [API_ERROR] - api error- occurs when theres an error from fetching from api
+        [JOB_ERROR]- error related to agenda jobs
+        [COMMANDS]- error in commands
+        [Worker]
 
-fatal-
-    [SYSTEM]- fatal error related to server/system
-    [DB]- fatal error related to db
-    [COMMAND] - fatal error related to commands
-------------------------------------------------------------------------------------------------------------
+    fatal-
+        [SYSTEM]- fatal error related to server/system
+        [DB]- fatal error related to db
+        [COMMAND] - fatal error related to commands
 
-used docker image of redis-
-    command- docker run -itd -p 6379:6379
+------------------Commands--------------------------------    
+    * To run the bot in development-
+            1. Run the grok- 
+                    ngrok http http://localhost:8080
+            2. Copy the webhook url and paste it in .env file.
+            3. Run docker image of reddis-
+                    docker run -itd -p 6379:6379
+            4. In terminal-
+                    pm2-dev bot.js   
 
-[DONE]                    implemented bull mq to fetch contest details. before fetching it stores the old contest id, deletes the contest from db, send notification
-                          to the users (who have enabled notification) about the new contest.
+    * To run the process in cluster-
+        pm2 start processes.json
 
-implemented pm2 to automatically start bot in development- pm2-dev bot.js
+    * Some other pm2 commands-
+        script to start the bot- pm2 start bot.js
 
-script to start the bot- pm2 start bot.js
+        to view metrics- pm2 list
+        to monitor- pm2 monit
 
-to view metrics- pm2 list
-to monitor- pm2 monit
+        to stop- pm2 stop all
+        to delete from memory- pm2 delete all
+        to list the processes- pm2 list
 
-to stop- pm2 stop all
-to delete from memory- pm2 delete all
-to list the processes- pm2 list
+------------------Resources---------------------------
+    *pm2 resources-
+        https://betterstack.com/community/guides/scaling-nodejs/pm2-guide/
 
-pm2 resource- https://betterstack.com/community/guides/scaling-nodejs/pm2-guide/
-              https://www.youtube.com/watch?v=fMtiHOIt0u8&t=1062s
+        https://www.youtube.com/watch?v=fMtiHOIt0u8&t=1062s
 
-message for banned users-
-you have been banned from using the bot contact admin.
+    Logging-
+        https://betterstack.com/telemetry
+
+    Clustering-
+        https://betterstack.com/community/guides/scaling-nodejs/pm2-guide/#step-11-clustering-with-pm2
+        https://www.youtube.com/watch?v=JoPZ9gEvpz8
