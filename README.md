@@ -6,7 +6,7 @@ Coderadar Bot is a Telegram bot designed to track user statistics across popular
 
 For a behind-the-scenes write-up on the architecture and development journey, check out this [Medium article](https://link.com).
 
-
+![Image](https://github.com/user-attachments/assets/8a45c421-b1d9-43dc-9faa-0fbf556a73f6)
 
 
 ## Features
