@@ -1,15 +1,5 @@
 ToDO-
 --------------------------------------------------------------------------
->    Implement rate limiter
-
->    After implementing express, can implement node clusters to serve multiple users- it uses round robbin algo.
-    Also can make a separate cluster dedicated only to admin to serve on priority basis.
-    NOTE- Only implement after implementing webhook
-                IMPLEMENTING CLUSTER AND PM2------WITH EXPRESS SERVER
-                Resource- https://betterstack.com/community/guides/scaling-nodejs/pm2-guide/#step-11-clustering-with-pm2
-                          https://www.youtube.com/watch?v=JoPZ9gEvpz8
-    Will use round robbin so that response time of the bot can be increased.
-
 
 >   [last stage] custom remider for users
 
@@ -19,21 +9,11 @@ ToDO-
     Automatic DB failover: If primary connection fails, switch to secondary and alert admin.
     Scheduled sync: Every 2 days, backup from primary is restored to secondary using mongodump/mongorestore.
 
->    implemented pm2 to automatically start bot in development- pm2-dev bot.js
-
 -----------------------------------------------------------------------------------------------------------------------
 Implement-
 
-    Admin commands
-
-    Rate limiter
-
-    system abuser detecter- who constantly sends message despite rate limit warning
-    autoban exploiters- 
-    Steps-
-        Req->rate limit exceeded->flagged as abuser-> banned
+    Rate limiter- implemented using telegraf rate limit
     
-    Clustering
 
     quickchart.io
 
@@ -109,8 +89,8 @@ Implement-
             4. In terminal-
                     pm2-dev bot.js   
 
-    * To run the process in cluster-
-        pm2 start processes.json
+    * To run the process in cluster with maximum available cpu-
+        pm2 start bot.js -i max
 
     * Some other pm2 commands-
         script to start the bot- pm2 start bot.js
