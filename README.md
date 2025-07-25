@@ -4,7 +4,7 @@
 
 Coderadar Bot is a Telegram bot designed to track user statistics across popular coding platforms — LeetCode, Codeforces, and CodeChef. It automatically notifies users of any rating changes, allowing them to stay updated without having to open each platform. All you need is Telegram.
 
-For a behind-the-scenes write-up on the architecture and development journey, check out this [Medium article](https://link.com).
+For a behind-the-scenes write-up on the architecture and development journey, check out this [Medium article](https://medium.com/@pushpesh0/building-a-scalable-telegram-bot-with-node-js-bullmq-and-webhooks-6b0070fcbdfc).
 
 ![Image](https://github.com/user-attachments/assets/8a45c421-b1d9-43dc-9faa-0fbf556a73f6)
 
@@ -39,13 +39,6 @@ For a behind-the-scenes write-up on the architecture and development journey, ch
   - Log transported to telemetry.
 
 
-
-
-## Demo
-
-
-
-## Screenshots
 
 
 
