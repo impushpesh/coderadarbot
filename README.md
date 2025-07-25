@@ -152,3 +152,40 @@ pm2 start bot.js -i max
 ```
 
 > `-i max` starts the bot in cluster mode using all available CPU cores.
+
+##  User Commands
+
+| Command | Description |
+|--------|-------------|
+| `/setup` | Setup handles (LeetCode, Codeforces, etc.) |
+| `/start` | Start the bot |
+| `/help` | Show help with available commands |
+| `/info` | Show your saved profile info from the database |
+| `/delete` | Delete your profile from the bot database |
+| `/togglecontestalerts` | Enable or disable upcoming contest alerts |
+| `/leetcode` | Get LeetCode user info |
+| `/leetcoderatinggraph` | Generate rating graph for LeetCode |
+| `/codechef` | Get CodeChef profile info |
+| `/codechefrating` | Get CodeChef user rating |
+| `/codeforce` | Get Codeforces user info |
+| `/codeforceratinggraph` | Generate rating graph for Codeforces |
+| `/contest` | Get upcoming Codeforces contest details |
+| `/status` | Get your status across all supported platforms |
+
+---
+
+## Admin Commands
+
+| Command | Description |
+|--------|-------------|
+| `/banuser <telegram_id>` | Ban a user from using the bot |
+| `/unbanuser <telegram_id>` | Unban a user |
+| `/listbannedusers` | List all currently banned users |
+| `/userinfo <telegram_id>` | Fetch user info from the database |
+| `/broadcast <message>` | Broadcast a message to all users |
+| `/uptime` | Show bot uptime |
+| `/restartbot` | Restart the bot |
+| `/botstats` | Show bot usage statistics |
+| `/totalusers` | Show total number of registered users |
+
+---
