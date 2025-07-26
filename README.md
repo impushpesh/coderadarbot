@@ -9,6 +9,12 @@ For a behind-the-scenes write-up on the architecture and development journey, ch
 ![Image](https://github.com/user-attachments/assets/8a45c421-b1d9-43dc-9faa-0fbf556a73f6)
 
 
+
+## Project demo
+https://github.com/user-attachments/assets/53afa570-c942-464e-8e4c-5639ff42f0cc
+
+![Image](https://github.com/user-attachments/assets/248eb2f7-9067-4db5-a2ac-ce53bbb9cc22)
+
 ## Features
 
 - **Track User Profiles**  
